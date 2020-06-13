@@ -104,7 +104,7 @@ butterfly.simu.3levels <- function(phi, p.true, ncohort=12,
    }
    
        
-   final.dose <- select.mtd(phi, tns, tys)$MTD
+   final.dose <- select.mtd(phi, tns, tys, cutoff.eli=1)$MTD
    list(MTD.dose=final.dose, dose.ns=tns, DLT.ns=tys)
 }
 
@@ -114,6 +114,7 @@ nsimu.f <- function(phi, p.true, ncohort=12, cohortsize=1, nsimu=1000){
     dose.nss <- list()
     DLT.nss <- list()
     for (k in 1:nsimu){
+        print(k)
         res <- butterfly.simu.3levels(phi, p.true, ncohort=ncohort, cohortsize=cohortsize)
         dose.nss[[k]] <- res$dose.ns
         
@@ -162,5 +163,5 @@ p.true6 <- c(0.04, 0.1, 0.2)
 ncohort <- 12
 cohortsize <- 1
 
-res <- nsimu.f(target, p.true1, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000)
+res <- nsimu.f(target, p.true3, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000)
 post.process(res)
