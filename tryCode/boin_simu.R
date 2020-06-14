@@ -15,7 +15,7 @@ ncohort <- 12
 cohortsize <- 1
 
 simu <- get.oc(target=target, 
-       p.true=p.true6,
+       p.true=p.true3,
        ncohort=ncohort,
        cohortsize=cohortsize, startdose=2,
        ntrial=1000)
