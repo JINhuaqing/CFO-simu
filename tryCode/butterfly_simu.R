@@ -64,15 +64,23 @@ move.dose.probs.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, phi, over.do
 
 
 # Make a decison among De-escalation, Stay and Escalation
-make.move.fn <- function(ps){
+make.move.fn <- function(ps, m=10){
     # ps: Output from move.dose.probs.fn 
+    # m: number of samples to draw for majority vote
     # output: 
     #    action: D--1, S--2, E--3
     cps <- cumsum(ps)
-    rv <- runif(1)
-    locs <- rv <= cps
-    action <- which.max(locs)
-    action
+    rvs <- runif(m)
+    locs <- sapply(rvs, function(rv)rv<= cps)
+    actions <- apply(locs, 2, which.max)
+    if (m==1){
+        final.action <- actions
+    }else{
+        res <- sapply(1:3, function(i)actions==i)
+        res <- colSums(res)
+        final.action <- which.max(res)
+    }
+    final.action
 }
 
 
@@ -94,12 +102,13 @@ post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
 
 # Simulation function
 butterfly.simu.fn <- function(phi, p.true, ncohort=12, 
-                                   cohortsize=1, alp.prior=0.1, bet.prior=0.1){
+                                   cohortsize=1, alp.prior=0.1, bet.prior=0.1, m=10){
     # phi: Target DIL rate
     # p.true: True DIL rates under the different dose levels
     # ncohort: The number of cohorts
     # cohortsize: The sample size in each cohort
     # alp.prior, bet.prior: prior parameters
+    # m: number of samples to draw for majority vote
     earlystop <- 0
     ndose <- length(p.true)
     cidx <- ceiling(ndose/2)
@@ -149,7 +158,7 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
         }
         
         ps <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, phi, cover.doses) 
-        idx.chg <- make.move.fn(ps) - 2
+        idx.chg <- make.move.fn(ps, m=m) - 2
         cidx <- idx.chg + cidx
         #print(c(ps, idx.chg))
         #print(c(tys, tns, tover.doses))
@@ -166,13 +175,13 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
     list(MTD=MTD, dose.ns=tns, DLT.ns=tys)
 }
 
-nsimu.fn <- function(phi, p.true, ncohort=12, cohortsize=1, nsimu=1000){
+nsimu.fn <- function(phi, p.true, ncohort=12, cohortsize=1, nsimu=1000, m=10){
     MTDs <- list()
     dose.nss <- list()
     DLT.nss <- list()
     for (k in 1:nsimu){
         print(k)
-        res <- butterfly.simu.fn(phi, p.true, ncohort=ncohort, cohortsize=cohortsize)
+        res <- butterfly.simu.fn(phi, p.true, ncohort=ncohort, cohortsize=cohortsize, m=m)
         dose.nss[[k]] <- res$dose.ns
         
         ncls <- length(res$dose.ns)
@@ -251,7 +260,7 @@ p.true6 <- c(0.04, 0.1, 0.2)
 ncohort <- 12
 cohortsize <- 1
 
-#res <- nsimu.fn(target, p.true1, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000)
+#res <- nsimu.fn(target, p.true1, ncohort=ncohort, cohortsize=cohortsize, nsimu=10, m=5)
 #post.process(res)
 #
 run.fn <- function(k){
