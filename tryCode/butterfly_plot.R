@@ -1,5 +1,6 @@
 rm(list=ls())
 library(magrittr)
+library(TruncatedDistributions)
 
 
 # probabilities of De-escalation, Stay or Escalation
@@ -14,14 +15,14 @@ move.dose.post.prob.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, phi){
         p2.sps <- rbeta(10000, alps[2], bets[2])
         post.spss$C <- p2.sps
         if (!is.na(ys[1])){
-            p1.sps <- tbeta.sampler.up(p2.sps, phi, alps[1], bets[1])
+            p1.sps <- tbeta.sampler.up(p2.sps, alps[1], bets[1])
             post.spss$L <- p1.sps
         }else{
             p1 <- 0
             post.spss$L <- NA
         }
         if (!is.na(ys[3])){
-            p3.sps <- tbeta.sampler.low(p2.sps, phi, alps[3], bets[3])
+            p3.sps <- tbeta.sampler.low(p2.sps, alps[3], bets[3])
             post.spss$R <- p3.sps
         }else{
             post.spss$R <- NA
@@ -126,6 +127,7 @@ post.dists <- res$post.dists
 length(post.dists)
 BOINint <- BOIN.int(0.2)
 
+setwd("/Users/jinhuaqing/Downloads")
 setwd("C:/Users/Dell/Downloads")
 png("s3.png", height=1200,width=900, res=100)
 par(mfrow=c(4, 3))
@@ -134,7 +136,24 @@ for (i in 1:length(post.dists)){
     L <- post.dist$L
     R <- post.dist$R
     C <- post.dist$C
-    plot(density(C), col=2, lty=1, type="l", main="Posterior density")
+    fitC <- density(C)
+    maxv <- max(fitC$y)
+    if (!sum(is.na(L))){
+        fitL <- density(L)
+        maxL <- max(fitL$y)
+        if (maxv <= maxL){
+            maxv <- maxL
+        }
+    }
+    if (!sum(is.na(R))){
+        fitR <- density(R)
+        maxR <- max(fitR$y)
+        if (maxv <= maxR){
+            maxv <- maxR
+        }
+    }
+    
+    plot(density(C), col=2, lty=1, type="l", main="Posterior density", ylim=c(0, maxv))
     if (!sum(is.na(L))){
         lines(density(L), col=3, lty=2, type="l")
     }
@@ -146,3 +165,14 @@ for (i in 1:length(post.dists)){
 }
 par(mfrow=c(1, 1))
 dev.off()
+
+plot(density(L))
+lines(density(R), col=2)
+
+p1.sps <- tbeta.sampler.up(C, alps[1], bets[1])
+p3.sps <- tbeta.sampler.low(C, alps[1], bets[1])
+
+xx <- rnorm(10000)
+fit <- density(xx)
+plot(fit)
+plot(density(xx))
