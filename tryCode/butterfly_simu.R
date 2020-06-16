@@ -17,12 +17,12 @@ BOIN.int <- function(phi, phiL, phiU){
 
 
 # truncated Beta sampler
-tbeta.sampler.low <- function(pcs, phi, alp, bet, pU=0.9){
+tbeta.sampler.low <- function(pcs, alp, bet, pU=0.9){
     n <- length(pcs)
     rtbeta(n, alp, bet, pcs, pU)
 }
 
-tbeta.sampler.up <- function(pcs, phi, alp, bet, pL=0){
+tbeta.sampler.up <- function(pcs, alp, bet, pL=0){
     n <- length(pcs)
     rtbeta(n, alp, bet, pL, pcs)
 }
@@ -43,13 +43,13 @@ move.dose.probs.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, phi, over.do
        
        p2.sps <- rbeta(10000, alps[2], bets[2])
        if (!is.na(ys[1])){
-           p1.sps <- tbeta.sampler.up(p2.sps, phi, alps[1], bets[1])
+           p1.sps <- tbeta.sampler.up(p2.sps, alps[1], bets[1])
            p1 <- mean(p1.sps>=BOINs[1] & p1.sps<=BOINs[2])
        }else{
            p1 <- 0
        }
        if (!(is.na(ys[3]) | over.doses[3]==1) ){
-           p3.sps <- tbeta.sampler.low(p2.sps, phi, alps[3], bets[3])
+           p3.sps <- tbeta.sampler.low(p2.sps, alps[3], bets[3])
            p3 <- mean(p3.sps>=BOINs[1] & p3.sps<=BOINs[2])
        }else{
            p3 <- 0
