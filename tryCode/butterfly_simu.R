@@ -2,7 +2,7 @@ rm(list=ls())
 library(TruncatedDistributions)
 library(BOIN)
 library(parallel)
-set.seed(1)
+set.seed(10)
 # Compute BOIN interval based on target DLT rate
 BOIN.int <- function(phi, phiL, phiU){
     if (missing(phiL)) {phiL <- 0.6 * phi}
@@ -172,7 +172,7 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
     }else{
         MTD <- 99
     }
-    list(MTD=MTD, dose.ns=tns, DLT.ns=tys)
+    list(MTD=MTD, dose.ns=tns, DLT.ns=tys, p.true=p.true, target=phi)
 }
 
 nsimu.fn <- function(phi, p.true, ncohort=12, cohortsize=1, nsimu=1000, m=10){
@@ -194,7 +194,7 @@ nsimu.fn <- function(phi, p.true, ncohort=12, cohortsize=1, nsimu=1000, m=10){
         DLT.nss[[k]] <- res$DLT.ns
     }
     
-    list(MTDs=MTDs, dose=dose.nss, DLTs=DLT.nss)
+    list(MTDs=MTDs, dose=dose.nss, DLTs=DLT.nss, p.true=p.true, target=phi)
 }
 
 
@@ -211,7 +211,7 @@ post.process <- function(res){
     DLTs <- do.call(rbind, DLTs)
     DLTs.mean <- colMeans(DLTs)
     
-    list(MTDs.percent=MTDs.percent, av.dose=dose.mean, av.DLT=DLTs.mean, t.dose=sum(dose.mean), t.DLT=sum(DLTs.mean))
+    list(MTDs.percent=MTDs.percent, av.dose=dose.mean, av.DLT=DLTs.mean, t.dose=sum(dose.mean), t.DLT=sum(DLTs.mean), p.true=res$p.true, target=res$target)
 }
     
 post.process.raw <- function(ress){
@@ -242,7 +242,7 @@ post.process.raw <- function(ress){
     DLTs <- do.call(rbind, DLTs)
     DLTs.mean <- colMeans(DLTs)
     
-    list(MTDs.percent=MTDs.percent, av.dose=dose.mean, av.DLT=DLTs.mean, t.dose=sum(dose.mean), t.DLT=sum(DLTs.mean))
+    list(MTDs.percent=MTDs.percent, av.dose=dose.mean, av.DLT=DLTs.mean, t.dose=sum(dose.mean), t.DLT=sum(DLTs.mean), p.true=res$p.true, target=res$target)
 }
 
 
@@ -260,15 +260,15 @@ p.true6 <- c(0.04, 0.1, 0.2)
 ncohort <- 12
 cohortsize <- 1
 
-#res <- nsimu.fn(target, p.true1, ncohort=ncohort, cohortsize=cohortsize, nsimu=10, m=5)
+#res <- nsimu.fn(target, p.true2, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000, m=10)
 #post.process(res)
 #
 run.fn <- function(k){
     print(k)
     phi <- target
-    p.true <- p.true3
-    res <- butterfly.simu.fn(phi, p.true, ncohort=ncohort, cohortsize=cohortsize)
+    p.true <- p.true6
+    res <- butterfly.simu.fn(phi, p.true, ncohort=ncohort, cohortsize=cohortsize, m=50)
     res
 }
-results <- mclapply(1:1000, run.fn, mc.cores=20)
+results <- mclapply(1:1000, run.fn, mc.cores=6)
 post.process.raw(results)
