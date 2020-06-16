@@ -62,6 +62,30 @@ move.dose.probs.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, phi, over.do
    ps
 }
 
+# probabilities of De-escalation, Stay or Escalation with CRM + interval
+move.dose.probs.crm.fn <- function(tys, tns, alp.prior, bet.prior, BOINs, phi, over.doses)
+for(i in 1:nCohort)
+{
+    
+    # generate data for the new patient
+    y = c(y, rbinom(CohortSize, 1, p[dose.curr]));
+    d = c(d, rep(dose.curr, CohortSize));
+    
+    # calculate posterior mean of toxicity probability at each dose leavel
+    marginal=integrate(posterior,lower=-Inf,upper=Inf,p.true,y,d)$value
+    for(j in 1:ndose) { pi.hat[j] = integrate(posttoxf,lower=-Inf,upper=Inf,p.true,y,d,j)$value/marginal;}
+    
+    # calculate pr(pi_1>target)
+    p.overtox = integrate(posterior,lower=-Inf,upper=log(log(target)/log(p.true[1])),p.true,y,d)$value/marginal;	
+    if(p.overtox>p.eli) { stop=1; break;}
+    
+    diff = abs(pi.hat-target);
+    dose.best = min(which(diff==min(diff)));
+    if(dose.best>dose.curr && dose.curr != ndose) dose.curr = dose.curr+1;
+    if(dose.best<dose.curr && dose.curr != 1) dose.curr = dose.curr-1;
+}
+
+
 
 # Make a decison among De-escalation, Stay and Escalation
 make.move.fn <- function(ps, m=10){
@@ -82,6 +106,7 @@ make.move.fn <- function(ps, m=10){
     }
     final.action
 }
+
 
 
 
