@@ -418,8 +418,8 @@ add.args <- list(alp.prior=0.1, bet.prior=0.1, p.prior=c(0.1, 0.2, 0.3))
 butterfly.simu.fn(target, p.true1, type="BB+CRM", add.args=add.args)
 butterfly.simu.fn(target, p.true2, type="CRM", add.args=list(p.prior=c(0.1, 0.2, 0.3)))
 
-#res <- nsimu.fn(target, p.true2, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000, m=10)
-#post.process(res)
+res <- nsimu.fn(target, p.true2, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000, m=10)
+res <- post.process(res)
 #
 run.fn <- function(k){
     print(k)
