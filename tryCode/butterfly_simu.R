@@ -29,9 +29,8 @@ tbeta.sampler.up <- function(pcs, alp, bet, pL=0){
 
 
 # probabilities of De-escalation, Stay or Escalation
-move.dose.probs.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, phi, over.doses){
+move.dose.probs.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, over.doses){
    # ys, ns: trial results for current 3 dose levels.
-   # phi: target DLT rate
    # over.doses: vector of size 3. Whether current 3 dose levels are overdosed or not. 
    #             First element is always 0. 
    if (over.doses[2]==1){
@@ -62,29 +61,64 @@ move.dose.probs.fn <- function(ys, ns, alp.prior, bet.prior, BOINs, phi, over.do
    ps
 }
 
+# The posterior density of alpha for CRM model under power funtion model up to a constant
+post.density.crm.powerfn <- function(alpha, p.prior, tys, tns) {
+    sigma2 <- 2
+    lik <- 1
+    for(i in 1:length(tns))
+    {
+        pi <- p.prior[i]^(exp(alpha));
+        lik <- lik*pi^tys[i]*(1-pi)^(tns[i]-tys[i]);
+    }
+    return(lik*exp(-0.5*alpha*alpha/sigma2));
+}
+
+crm.power.limfn <- function(cv, pj.prior){
+    num <- log(cv)
+    den <- log(pj.prior)
+    return(log(num/den))
+}
+
 # probabilities of De-escalation, Stay or Escalation with CRM + interval
-#move.dose.probs.crm.fn <- function(tys, tns, alp.prior, bet.prior, BOINs, phi, over.doses)
-#for(i in 1:nCohort)
-#{
-#    
-#    # generate data for the new patient
-#    y = c(y, rbinom(CohortSize, 1, p[dose.curr]));
-#    d = c(d, rep(dose.curr, CohortSize));
-#    
-#    # calculate posterior mean of toxicity probability at each dose leavel
-#    marginal=integrate(posterior,lower=-Inf,upper=Inf,p.true,y,d)$value
-#    for(j in 1:ndose) { pi.hat[j] = integrate(posttoxf,lower=-Inf,upper=Inf,p.true,y,d,j)$value/marginal;}
-#    
-#    # calculate pr(pi_1>target)
-#    p.overtox = integrate(posterior,lower=-Inf,upper=log(log(target)/log(p.true[1])),p.true,y,d)$value/marginal;	
-#    if(p.overtox>p.eli) { stop=1; break;}
-#    
-#    diff = abs(pi.hat-target);
-#    dose.best = min(which(diff==min(diff)));
-#    if(dose.best>dose.curr && dose.curr != ndose) dose.curr = dose.curr+1;
-#    if(dose.best<dose.curr && dose.curr != 1) dose.curr = dose.curr-1;
-#}
-#
+#move.dose.probs.crm.fn(tys=c(1, 1, 1), tns=c(3, 2, 6), p.prior=c(0.1, 0.2, 0.3), BOIN.int(0.5), 2, c(0, 0, 0))
+move.dose.probs.crm.fn <- function(tys, tns, p.prior, BOINs, cidx, over.doses){
+    # calculate posterior mean of toxicity probability at each dose leavel
+    if (over.doses[2]==1){
+        ps <- c(1, 0, 0)
+    }else{
+        #marginal <- integrate(post.density.crm.powerfn,lower=-Inf,upper=Inf,p.prior,tys,tns)$value
+        U <- BOINs[2]
+        L <- BOINs[1]
+        p2.prior <- p.prior[cidx]
+        p2.num <- integrate(post.density.crm.powerfn,
+                            lower=crm.power.limfn(U, p2.prior),
+                            upper=crm.power.limfn(L, p2.prior),
+                            p.prior,tys,tns)$value
+        if (cidx!=1){
+            p1.prior <- p.prior[cidx-1]
+            p1.num <- integrate(post.density.crm.powerfn,
+                            lower=crm.power.limfn(U, p1.prior),
+                            upper=crm.power.limfn(L, p1.prior),
+                            p.prior,tys,tns)$value
+        }else{
+            p1.num <- 0
+        }
+        if (!(cidx==length(tys) | over.doses[3]==1) ){
+            p3.prior <- p.prior[cidx+1]
+            p3.num <- integrate(post.density.crm.powerfn,
+                            lower=crm.power.limfn(U, p3.prior),
+                            upper=crm.power.limfn(L, p3.prior),
+                            p.prior,tys,tns)$value
+        }else{
+            p3.num <- 0
+        }
+        
+        ups <- c(p1.num, p2.num, p3.num)
+        ps <- ups/sum(ups)
+    }
+    names(ps) <- c("D prob", "S prob", "E prob")
+    ps
+}
 
 
 # Make a decison among De-escalation, Stay and Escalation
@@ -107,6 +141,27 @@ make.move.fn <- function(ps, m=10){
     final.action
 }
 
+mul.make.move.fn <- function(ps1, ps2, ms=c(5, 5)){
+    # ps: Output from move.dose.probs.fn 
+    # m: number of samples to draw for majority vote
+    # output: 
+    #    action: D--1, S--2, E--3
+    m1 <- ms[1]
+    m2 <- ms[2]
+    cps1 <- cumsum(ps1)
+    cps2 <- cumsum(ps2)
+    rvs1 <- runif(m1)
+    rvs2 <- runif(m2)
+    locs1 <- sapply(rvs1, function(rv)rv<= cps1)
+    locs2 <- sapply(rvs2, function(rv)rv<= cps2)
+    locs <- cbind(locs1, locs2)
+    actions <- apply(locs, 2, which.max)
+    res <- sapply(1:3, function(i)actions==i)
+    res <- colSums(res)
+    final.action <- which.max(res)
+    final.action
+}
+
 
 
 
@@ -117,6 +172,37 @@ post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
     1 - pbeta(phi, alp, bet)
 }
 
+overdose.fn <- function(phi, type="BB", add.args=list()){
+        args <- c(list(phi=phi), add.args)
+    if (type=="BB"){
+        y <- add.args$y
+        n <- add.args$n
+        alp.prior <- add.args$alp.prior
+        bet.prior <- add.args$bet.prior
+        pp <- post.prob.fn(phi, y, n, alp.prior, bet.prior)
+        if ((pp >= 0.95) & (add.args$n>=3)){
+            return(TRUE)
+        }else{
+            return(FALSE)
+        }
+    }else if (type=="CRM"){
+        tys <- add.args$tys
+        tns <- add.args$tns
+        p.prior <- add.args$p.prior
+        cidx <- add.args$cidx
+        pc.prior <- p.prior[cidx]
+        cv <- crm.power.limfn(phi, pc.prior)
+        marginal <- integrate(post.density.crm.powerfn,lower=-Inf,upper=Inf,p.prior,tys,tns)$value
+        num <- integrate(post.density.crm.powerfn,lower=-Inf,upper=cv,p.prior,tys,tns)$value
+        pp <- num/marginal
+        if ((pp >= 0.95) & (tns[cidx]>=3)){
+            return(TRUE)
+        }else{
+            return(FALSE)
+        }
+    }
+    
+}
 
 #phi <- 0.2
 #p.true <- c(0.2, 0.3, 0.4)
@@ -126,14 +212,18 @@ post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
 #bet.prior <- 0.1
 
 # Simulation function
-butterfly.simu.fn <- function(phi, p.true, ncohort=12, 
-                                   cohortsize=1, alp.prior=0.1, bet.prior=0.1, m=10){
+butterfly.simu.fn <- function(phi, p.true, ncohort=12,  m=10,
+                              cohortsize=1, type="BB", add.args=list()){
     # phi: Target DIL rate
     # p.true: True DIL rates under the different dose levels
     # ncohort: The number of cohorts
     # cohortsize: The sample size in each cohort
     # alp.prior, bet.prior: prior parameters
     # m: number of samples to draw for majority vote
+    # add.args, list of argments. 
+    #    BB: list(alp.prior=, bet.prior)
+    #    CRM: list(p.prior)
+    #    BB+CRM: list(alp.prior=, bet.prior=, p.prior)
     earlystop <- 0
     ndose <- length(p.true)
     cidx <- ceiling(ndose/2)
@@ -159,9 +249,9 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
         cy <- tys[cidx]
         cn <- tns[cidx]
         
-        pp <- post.prob.fn(phi, cy, cn, alp.prior, bet.prior)
+        add.args.od <- c(list(y=cy, n=cn, tys=tys, tns=tns, cidx=cidx), add.args)
         
-        if ((pp >= 0.95) & (cn>=3)){
+        if (overdose.fn(phi, type, add.args.od)){
             tover.doses[cidx:ndose] <- 1
         }
         
@@ -182,8 +272,23 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
             cover.doses <- c(NA, tover.doses[1:(cidx+1)])
         }
         
-        ps <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, phi, cover.doses) 
-        idx.chg <- make.move.fn(ps, m=m) - 2
+        if (type=="BB"){
+            alp.prior <- add.args$alp.prior
+            bet.prior <- add.args$bet.prior
+            ps <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, cover.doses) 
+            idx.chg <- make.move.fn(ps, m=m) - 2
+        }else if (type=="CRM"){
+            p.prior <- add.args$p.prior
+            ps <- move.dose.probs.crm.fn(tys, tns, p.prior, BOINs, cidx, cover.doses)
+            idx.chg <- make.move.fn(ps, m=m) - 2
+        }else{
+            alp.prior <- add.args$alp.prior
+            bet.prior <- add.args$bet.prior
+            p.prior <- add.args$p.prior
+            ps1 <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, cover.doses) 
+            ps2 <- move.dose.probs.crm.fn(tys, tns, p.prior, BOINs, cidx, over.doses)
+            idx.chg <- mul.make.move.fn(ps1, ps2, ms=c(m/2, m/2))
+        }
         cidx <- idx.chg + cidx
         #print(c(ps, idx.chg))
         #print(c(tys, tns, tover.doses))
@@ -204,9 +309,12 @@ nsimu.fn <- function(phi, p.true, ncohort=12, cohortsize=1, nsimu=1000, m=10){
     MTDs <- list()
     dose.nss <- list()
     DLT.nss <- list()
+    add.args <- list(p.prior=c(0.1, 0.2, 0.3))
+    #add.args <- list(alp.prior=0.1, bet.prior=0.1)
     for (k in 1:nsimu){
         print(k)
-        res <- butterfly.simu.fn(phi, p.true, ncohort=ncohort, cohortsize=cohortsize, m=m)
+        res <- butterfly.simu.fn(phi, p.true, type="CRM",
+                                 ncohort=ncohort, cohortsize=cohortsize, m=m, add.args=add.args)
         dose.nss[[k]] <- res$dose.ns
         
         ncls <- length(res$dose.ns)
@@ -284,6 +392,8 @@ p.true6 <- c(0.04, 0.1, 0.2)
 
 ncohort <- 12
 cohortsize <- 1
+butterfly.simu.fn(target, p.true1, type="BB", add.args=list(alp.prior=0.1, bet.prior=0.1))
+butterfly.simu.fn(target, p.true2, type="CRM", add.args=list(p.prior=c(0.1, 0.2, 0.3)))
 
 #res <- nsimu.fn(target, p.true2, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000, m=10)
 #post.process(res)
@@ -291,8 +401,10 @@ cohortsize <- 1
 run.fn <- function(k){
     print(k)
     phi <- target
-    p.true <- p.true6
-    res <- butterfly.simu.fn(phi, p.true, ncohort=ncohort, cohortsize=cohortsize, m=50)
+    p.true <- p.true1
+    #add.args <- list(p.prior=c(0.1, 0.2, 0.3))
+    add.args <- list(alp.prior=0.1, bet.prior=0.1)
+    res <- butterfly.simu.fn(phi, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, m=50, add.args=add.args)
     res
 }
 results <- mclapply(1:1000, run.fn, mc.cores=6)
