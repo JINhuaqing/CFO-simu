@@ -200,6 +200,28 @@ overdose.fn <- function(phi, type="BB", add.args=list()){
         }else{
             return(FALSE)
         }
+    }else{
+
+        y <- add.args$y
+        n <- add.args$n
+        alp.prior <- add.args$alp.prior
+        bet.prior <- add.args$bet.prior
+        pp1 <- post.prob.fn(phi, y, n, alp.prior, bet.prior)
+
+        tys <- add.args$tys
+        tns <- add.args$tns
+        p.prior <- add.args$p.prior
+        cidx <- add.args$cidx
+        pc.prior <- p.prior[cidx]
+        cv <- crm.power.limfn(phi, pc.prior)
+        marginal <- integrate(post.density.crm.powerfn,lower=-Inf,upper=Inf,p.prior,tys,tns)$value
+        num <- integrate(post.density.crm.powerfn,lower=-Inf,upper=cv,p.prior,tys,tns)$value
+        pp2 <- num/marginal
+        if (((pp1 >= 0.95) | (pp2>=0.95)) & (add.args$n>=3)){
+            return(TRUE)
+        }else{
+            return(FALSE)
+        }
     }
     
 }
@@ -286,8 +308,8 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,  m=10,
             bet.prior <- add.args$bet.prior
             p.prior <- add.args$p.prior
             ps1 <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, cover.doses) 
-            ps2 <- move.dose.probs.crm.fn(tys, tns, p.prior, BOINs, cidx, over.doses)
-            idx.chg <- mul.make.move.fn(ps1, ps2, ms=c(m/2, m/2))
+            ps2 <- move.dose.probs.crm.fn(tys, tns, p.prior, BOINs, cidx, cover.doses)
+            idx.chg <- mul.make.move.fn(ps1, ps2, ms=c(m/2, m/2)) - 2
         }
         cidx <- idx.chg + cidx
         #print(c(ps, idx.chg))
@@ -392,7 +414,8 @@ p.true6 <- c(0.04, 0.1, 0.2)
 
 ncohort <- 12
 cohortsize <- 1
-butterfly.simu.fn(target, p.true1, type="BB", add.args=list(alp.prior=0.1, bet.prior=0.1))
+add.args <- list(alp.prior=0.1, bet.prior=0.1, p.prior=c(0.1, 0.2, 0.3))
+butterfly.simu.fn(target, p.true1, type="BB+CRM", add.args=add.args)
 butterfly.simu.fn(target, p.true2, type="CRM", add.args=list(p.prior=c(0.1, 0.2, 0.3)))
 
 #res <- nsimu.fn(target, p.true2, ncohort=ncohort, cohortsize=cohortsize, nsimu=1000, m=10)
@@ -401,11 +424,12 @@ butterfly.simu.fn(target, p.true2, type="CRM", add.args=list(p.prior=c(0.1, 0.2,
 run.fn <- function(k){
     print(k)
     phi <- target
-    p.true <- p.true1
+    p.true <- p.true6
     #add.args <- list(p.prior=c(0.1, 0.2, 0.3))
-    add.args <- list(alp.prior=0.1, bet.prior=0.1)
-    res <- butterfly.simu.fn(phi, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, m=50, add.args=add.args)
+    #add.args <- list(alp.prior=0.1, bet.prior=0.1)
+    add.args <- list(alp.prior=0.1, bet.prior=0.1, p.prior=c(0.1, 0.2, 0.3))
+    res <- butterfly.simu.fn(phi, p.true, type="CRM", ncohort=ncohort, cohortsize=cohortsize, m=1, add.args=add.args)
     res
 }
-results <- mclapply(1:1000, run.fn, mc.cores=6)
+results <- mclapply(1:1000, run.fn, mc.cores=20)
 post.process.raw(results)
