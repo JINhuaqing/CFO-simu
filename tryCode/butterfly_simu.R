@@ -2,6 +2,7 @@ rm(list=ls())
 library(TruncatedDistributions)
 library(BOIN)
 library(parallel)
+setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/tryCode")
 source("utilities.R")
 set.seed(10)
 # Compute BOIN interval based on target DLT rate
@@ -15,6 +16,24 @@ BOIN.int <- function(phi, phiL, phiU){
     names(res) <-  c("BOIN lb", "BOIN ub")
     res
 }
+
+# Compute adaptive BOIN interval based on target DLT rate
+aBOIN.int <- function(phi, n, N){
+    # n: current number of cohorts
+    # N: Total number of cohorts
+    c <- 0.2
+    cont <- 0.4 + (1/sqrt(n)-1)*(c-0.4)/(1/sqrt(N)- 1)
+    
+    phiL <- (1- cont)* phi
+    phiU <- (1+ cont)* phi
+    
+    deltaL <- log((1-phiL)/(1-phi))/log(phi*(1-phiL)/phiL/(1-phi))
+    deltaU <- log((1-phi)/(1-phiU))/log(phiU*(1-phi)/phi/(1-phiU))
+    res <- c(deltaL, deltaU)
+    names(res) <-  c("BOIN lb", "BOIN ub")
+    res
+}
+
 
 
 # truncated Beta sampler
@@ -256,11 +275,13 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,  m=10,
     tover.doses <- rep(0, ndose) # Whether each dose is overdosed or not, 1 yes
     
     
-    BOINs <- BOIN.int(phi)
     
     
     for (i in 1:ncohort){
+        BOINs <- aBOIN.int(phi, i, ncohort)
         pc <- p.true[cidx] 
+        
+        # sample from current dose
         cres <- rbinom(cohortsize, 1, pc)
         
         # update results
