@@ -1,5 +1,7 @@
 library(BOIN)
+source("boin_utils.R")
 
+boin.simu.fn(0.3, p.true, 12, 1)
 target <- 0.2
 
 p.true1 <- c(0.1, 0.2, 0.3)
@@ -18,9 +20,11 @@ simu <- get.oc(target=target,
        p.true=p.true3,
        ncohort=ncohort,
        cohortsize=cohortsize, startdose=2,
-       ntrial=1000)
+       ntrial=2)
 
 summary(simu)
 
 bdry <- get.boundary(target=0.4, ncohort=4, cohortsize=3)
 summary(bdry)
+
+boin.simu.fn(target, p.true1, 12, 1)

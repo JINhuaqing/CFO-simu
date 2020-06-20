@@ -1,5 +1,5 @@
-library(CRM)
 library(magrittr)
+source("crm_utils.R")
 
 target <- 0.2
 prior <- c(0.1, 0.2, 0.3)
@@ -18,8 +18,4 @@ p.true6 <- c(0.04, 0.1, 0.2)
 ncohort <- 12
 cohortsize <- 1
 
-fit <- crmsim(target, prior, p.true6, rate, cycle,
-       cohort=cohortsize, nsubject=ncohort*cohortsize, model=2, nsim=1000, start.dose=2)
-fit$SimResult[c(1, 3), ]
-fit$SimResult[3, ] %>% sum %>% round(1)
-fit$SimResult[4, ] %>% sum %>% round(1)
+crm.simu.fn(target, p.true1, ncohort=ncohort, cohortsize=cohortsize)
