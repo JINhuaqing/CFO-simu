@@ -16,12 +16,14 @@ posterior <- function(alpha, p, y, d) {
 posttoxf <- function(alpha, p, y, d, j) { p[j]^(exp(alpha))*posterior(alpha, p, y, d); }
 
 crm.simu.fn <-function(target = 0.30, ## Target toxicity pr
-              p.true, cohortsize=1, ncohort=12, p.eli = 0.95, ntrial=1){
+              p.true, p.prior, cohortsize=1, ncohort=12, p.eli = 0.95, ntrial=1){
     
     
     
     ndose <- length(p.true)
-    p.prior <- getprior(0.05, target, ceiling(ndose/2), ndose)
+    if (missing(p.prior)){
+        p.prior <- getprior(0.05, target, ceiling(ndose/2), ndose)
+    }
     ndose = length(p.prior);
     sel=rep(0,ndose);
     pts=rep(0,ndose);
