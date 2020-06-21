@@ -275,7 +275,8 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,  m=10,
     
     
     for (i in 1:ncohort){
-        BOINs <- aBOIN.int(phi, i, ncohort)
+        BOINs <- BOIN.int(phi)
+        #BOINs <- aBOIN.int(phi, i, ncohort)
         pc <- p.true[cidx] 
         
         # sample from current dose
