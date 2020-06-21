@@ -170,4 +170,31 @@ post.process.random <- function(results){
 }
 
 
-
+# function to plot the results under random scenarios
+res.plot.fn <- function(res, filename, M.names, is.save=TRUE){
+  if (missing(filename)){
+    is.save <- FALSE
+  }
+  myBarplot <- function(data, labels_vec, rot_angle, main, ylim=NULL) {
+    nM <- dim(res)[1]
+    plt <- barplot(data, col=2:(nM+1), xaxt="n", main=main, ylim=ylim)
+    text(plt, par("usr")[3], labels = labels_vec, srt = rot_angle, adj = c(1.1,1.1), xpd = TRUE, cex=0.8) 
+  }
+  if (missing(M.names)){
+      M.names <- c("Butterfly-BB", "Butterfly-CRM", "Butterfly-BB-CRM", "CRM", "BOIN")
+  }
+  if (is.save){
+    png(filename, width=360*2, height=240*2)
+  }
+  par(mfrow=c(2, 3))
+  myBarplot(res$MTD.Sel, main="MTD selection %", labels_vec=M.names, rot_angle=45)
+  myBarplot(res$MTD.Allo, main="MTD Allocation %", labels_vec=M.names, rot_angle=45)
+  myBarplot(res$Over.Sel, main="Overdose selection %", labels_vec=M.names, rot_angle=45)
+  myBarplot(res$Over.Allo, main="Overdose Allocation %", labels_vec=M.names, rot_angle=45)
+  myBarplot(res$Risk.of.HT, main="Risk of high toxicity %", labels_vec=M.names, rot_angle=45)
+  myBarplot(res$PerDLT, main="Avergae DLT rate %", labels_vec=M.names, rot_angle=45)
+  par(mfrow=c(1, 2))
+  if (is.save){
+    dev.off()
+  }
+}
