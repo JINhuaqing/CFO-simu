@@ -1,4 +1,6 @@
 library(magrittr)
+library(dplyr)
+
 # return latex scr code for output
 latex.out.fn <- function(res, prefix, tidx, suffix=NULL){
   MTDs <- res$MTDs.percent  
@@ -111,6 +113,61 @@ prob.diff.fn.sep <- function(res, target=0.3){
 
 
 
+
+post.process.onemethod <- function(res, paras){
+    tmtd <- paras$mtd
+    target <- paras$target
+    ndose <- length(res$p.true)
+    rv <- rep(0, 7)
+    rv[1] <- sum(res$MTD==tmtd)
+    rv[2] <- res$dose.ns[tmtd]
+    rv[3] <- sum(res$MTD>tmtd)
+    if (tmtd==ndose){
+        rv[4] <- 0
+    }else{
+        rv[4] <- sum(res$dose.ns[(tmtd+1):ndose])
+    }
+    rv[5] <- sum((sum(res$DLT.ns)/sum(res$dose.ns))>target)
+    rv[6] <- sum(res$DLT.ns)
+    rv[7] <- sum(res$dose.ns)
+    names(rv) <- c(
+        "MTD Sel", "MTD Allo", "Over Sel", 
+        "Over Allo", "Risk of HT", "No DLT",
+        "No Subject")
+    rv
+    
+}
+post.process.single <- function(result){
+    nMethod <- length(result)-1
+    paras <- result$paras
+    tmtd <- paras$mtd
+    methods <- names(result)[1:nMethod]
+    res.v <- list()
+    for (name in methods){
+        res.v[[name]] <- post.process.onemethod(result[[name]], paras)
+    }
+    do.call(rbind, res.v)
+}
+
+# Function to handle the results under random scenario
+post.process.random <- function(results){
+    nsimu <- length(results)
+    res.all <- 0
+    for (result in results){
+        res.all <- post.process.single(result) + res.all
+    }
+    res.all.df <- data.frame(res.all)
+    final.res <- transmute(res.all.df, 
+                           MTD.Sel=MTD.Sel/nsimu,
+                           MTD.Allo=MTD.Allo/No.Subject,
+                           Over.Sel=Over.Sel/nsimu,
+                           Over.Allo=Over.Allo/No.Subject,
+                           Risk.of.HT=Risk.of.HT/nsimu,
+                           PerDLT=No.DLT/No.Subject
+    )
+    rownames(final.res) <- rownames(res.all.df)
+    final.res
+}
 
 
 
