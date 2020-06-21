@@ -1,4 +1,3 @@
-rm(list=ls())
 library(TruncatedDistributions)
 library(BOIN)
 source("utilities.R")
