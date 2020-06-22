@@ -1,5 +1,8 @@
 library(magrittr)
 library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(grid)
 
 # return latex scr code for output
 latex.out.fn <- function(res, prefix, tidx, suffix=NULL){
@@ -171,14 +174,15 @@ post.process.random <- function(results){
 
 
 # function to plot the results under random scenarios
-res.plot.fn <- function(res, filename, M.names, is.save=TRUE){
+res.plot.fn <- function(res, filename, M.names, is.save=TRUE, angle=45){
   if (missing(filename)){
     is.save <- FALSE
   }
   myBarplot <- function(data, labels_vec, rot_angle, main, ylim=NULL) {
     nM <- dim(res)[1]
     plt <- barplot(data, col=2:(nM+1), xaxt="n", main=main, ylim=ylim)
-    text(plt, par("usr")[3], labels = labels_vec, srt = rot_angle, adj = c(1.1,1.1), xpd = TRUE, cex=0.8) 
+    text(plt, par("usr")[3], labels = labels_vec, srt = rot_angle, adj = c(1.1,1.1), 
+         xpd = TRUE, cex=0.8, font=1) 
   }
   if (missing(M.names)){
       M.names <- c("Butterfly-BB", "Butterfly-CRM", "Butterfly-BB-CRM", "CRM", "BOIN")
@@ -187,14 +191,47 @@ res.plot.fn <- function(res, filename, M.names, is.save=TRUE){
     png(filename, width=360*2, height=240*2)
   }
   par(mfrow=c(2, 3))
-  myBarplot(res$MTD.Sel, main="MTD selection %", labels_vec=M.names, rot_angle=45)
-  myBarplot(res$MTD.Allo, main="MTD Allocation %", labels_vec=M.names, rot_angle=45)
-  myBarplot(res$Over.Sel, main="Overdose selection %", labels_vec=M.names, rot_angle=45)
-  myBarplot(res$Over.Allo, main="Overdose Allocation %", labels_vec=M.names, rot_angle=45)
-  myBarplot(res$Risk.of.HT, main="Risk of high toxicity %", labels_vec=M.names, rot_angle=45)
-  myBarplot(res$PerDLT, main="Avergae DLT rate %", labels_vec=M.names, rot_angle=45)
-  par(mfrow=c(1, 2))
+  myBarplot(res$MTD.Sel, main="MTD selection %", labels_vec=M.names, rot_angle=angle)
+  myBarplot(res$MTD.Allo, main="MTD Allocation %", labels_vec=M.names, rot_angle=angle)
+  myBarplot(res$Over.Sel, main="Overdose selection %", labels_vec=M.names, rot_angle=angle)
+  myBarplot(res$Over.Allo, main="Overdose Allocation %", labels_vec=M.names, rot_angle=angle)
+  myBarplot(res$Risk.of.HT, main="Risk of high toxicity %", labels_vec=M.names, rot_angle=angle)
+  myBarplot(res$PerDLT, main="Avergae DLT rate %", labels_vec=M.names, rot_angle=angle)
+  par(mfrow=c(1, 1))
   if (is.save){
     dev.off()
   }
 }
+
+res.ggplot.fn <- function(res, filename, main, M.names, is.save=TRUE, angle=NULL){
+    if (missing(filename)){
+        is.save <- FALSE
+    }
+    myggBarplot <- function(data, angle, main, theylim) {
+         g <- ggplot(mapping=aes(x=M.names, y=data, fill=M.names))
+         g <- g + geom_bar(stat="identity") + guides(fill=FALSE) + ggtitle(main)
+         g <- g + theme(axis.title = element_blank())
+         if (!is.null(angle)){
+             g <- g + theme(axis.text.x = element_text(angle=angle, vjust=1, hjust=1))
+         }
+         if (!missing(theylim)){
+             g <- g + ylim(theylim)
+         }
+             
+         g
+    }
+    if (missing(M.names)){
+        M.names <- c("Butterfly-BB", "Butterfly-CRM", "Butterfly-BB-CRM", "CRM", "BOIN")
+    }
+    g1 <- myggBarplot(res$MTD.Sel, main="MTD selection %", angle=angle)
+    g2 <- myggBarplot(res$MTD.Allo, main="MTD Allocation %", angle=angle)
+    g3 <- myggBarplot(res$Over.Sel, main="Overdose selection %", angle=angle)
+    g4 <- myggBarplot(res$Over.Allo, main="Overdose Allocation %", angle=angle)
+    g5 <- myggBarplot(res$Risk.of.HT, main="Risk of high toxicity %", angle=angle)
+    g6 <- myggBarplot(res$PerDLT, main="Avergae DLT rate %", angle=angle)
+    gg <- grid.arrange(g1, g2, g3, g4, g5, g6, nrow=3, top=textGrob(main, gp=gpar(fontsize=20, fontface=2)))
+    if (is.save){
+        ggsave(filename, gg, width=8, height=12, unit="in")
+    }
+}
+
