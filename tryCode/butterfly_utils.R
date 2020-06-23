@@ -250,19 +250,52 @@ overdose.fn <- function(phi, type="BB", add.args=list()){
 #alp.prior <- 0.1
 #bet.prior <- 0.1
 
+# Function to make a decision based on the odds close to 1 most
+make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses){
+   if (over.doses[2]==1){
+       return(1)
+   }else{
+       alps <- ys + alp.prior
+       bets <- ns - ys + bet.prior
+       p2.under <- pbeta(phi, alps[2], bets[2])
+       p2.odds <- (1-p2.under)/p2.under
+
+       p2.sps <- rbeta(10000, alps[2], bets[2])
+       if (!is.na(ys[1])){
+           p1.sps <- tbeta.sampler.up(p2.sps, alps[1], bets[1])
+           p1.over <- mean(p1.sps>=phi)
+           p1.odds <- p1.over / (1 - p1.over)
+       }else{
+           p1.odds <- Inf
+       }
+       if (!(is.na(ys[3]) | over.doses[3]==1) ){
+           p3.sps <- tbeta.sampler.low(p2.sps, alps[3], bets[3])
+           p3.over <- mean(p3.sps>=phi)
+           p3.odds <- p3.over / (1 - p3.over)
+       }else{
+           p3.odds <- Inf
+       }
+       
+       oddss <- c(p1.odds, p2.odds, p3.odds)
+       final.action <- which.min(abs(oddss-1))
+       return(final.action)
+   }
+}
+
+
 # Simulation function
-butterfly.simu.fn <- function(phi, p.true, ncohort=12,  m=10,
+butterfly.simu.fn <- function(phi, p.true, ncohort=12,
                               cohortsize=1, type="BB", add.args=list()){
     # phi: Target DIL rate
     # p.true: True DIL rates under the different dose levels
     # ncohort: The number of cohorts
     # cohortsize: The sample size in each cohort
     # alp.prior, bet.prior: prior parameters
-    # m: number of samples to draw for majority vote
     # add.args, list of argments. 
-    #    BB: list(alp.prior=, bet.prior)
-    #    CRM: list(p.prior)
-    #    BB+CRM: list(alp.prior=, bet.prior=, p.prior)
+    #    BB: list(alp.prior=, bet.prior, m)
+    #    CRM: list(p.prior, m)
+    #    BB+CRM: list(alp.prior=, bet.prior=, p.prior, m)
+    #           m: number of samples to draw for majority vote
     earlystop <- 0
     ndose <- length(p.true)
     cidx <- ceiling(ndose/2)
@@ -315,22 +348,30 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,  m=10,
         }
         
         if (type=="BB"){
+            m <- add.args$m
             alp.prior <- add.args$alp.prior
             bet.prior <- add.args$bet.prior
             ps <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, cover.doses) 
             idx.chg <- make.move.fn(ps, m=m) - 2
         }else if (type=="CRM"){
+            m <- add.args$m
             p.prior <- add.args$p.prior
             ps <- move.dose.probs.crm.fn(tys, tns, p.prior, BOINs, cidx, cover.doses)
             idx.chg <- make.move.fn(ps, m=m) - 2
-        }else{
+        }else if (type=="BB+CRM"){
+            m <- add.args$m
             alp.prior <- add.args$alp.prior
             bet.prior <- add.args$bet.prior
             p.prior <- add.args$p.prior
             ps1 <- move.dose.probs.fn(cys, cns, alp.prior, bet.prior, BOINs, cover.doses) 
             ps2 <- move.dose.probs.crm.fn(tys, tns, p.prior, BOINs, cidx, cover.doses)
             idx.chg <- mul.make.move.fn(ps1, ps2, ms=c(m/2, m/2)) - 2
+        }else if (type=="Odds"){
+            alp.prior <- add.args$alp.prior
+            bet.prior <- add.args$bet.prior
+            idx.chg <- make.decision.odds.fn(phi, cys, cns, alp.prior, bet.prior, cover.doses) - 2
         }
+
         cidx <- idx.chg + cidx
         #print(c(ps, idx.chg))
         #print(c(tys, tns, tover.doses))

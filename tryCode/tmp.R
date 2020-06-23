@@ -1,3 +1,3 @@
 source("utilities.R")
-load("../results/rand10000_m_50.RData")
+load("../results/Odds_rand10000TSS_12.RData")
 post.process.random(results)
