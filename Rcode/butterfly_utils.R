@@ -277,11 +277,90 @@ make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses)
        }
        
        oddss <- c(p1.odds, p2.odds, p3.odds)
-       final.action <- which.min(abs(oddss-1))
+       final.action <- which.min(abs(log(oddss)))
        return(final.action)
    }
 }
 
+ 
+# Function to make a decision based on the odds close to 1 most
+# with ditribution p1 < p2 < p3 
+# Very bad performance
+make.decision.odds.fn2 <- function(phi, ys, ns, alp.prior, bet.prior, over.doses){
+   if (over.doses[2]==1){
+       return(1)
+   }else{
+       alps <- ys + alp.prior
+       bets <- ns - ys + bet.prior
+       p2.under <- pbeta(phi, alps[2], bets[2])
+       p2.odds <- (1-p2.under)/p2.under
+       p2.sps <- rbeta(10000, alps[2], bets[2])
+       if (is.na(ys[1])){
+           p2.sps <- c() 
+           p3.sps <- c()
+           while (length(p2.sps)<=10000){
+               p2.sp <- rbeta(1, alps[2], bets[2])
+               p3.sp <- rbeta(1, alps[3], bets[3])
+               if (p2.sp < p3.sp){
+                   p2.sps <- c(p2.sps, p2.sp)
+                   p3.sps <- c(p3.sps, p3.sp)
+               }
+
+           }
+           p2.over <- mean(p2.sps>=phi)
+           p2.odds <- p2.over / (1 - p2.over)
+           p3.over <- mean(p3.sps>=phi)
+           p3.odds <- p3.over / (1 - p3.over)
+           p1.odds <- Inf
+       }else if (is.na(ys[3])){
+           p1.sps <- c() 
+           p2.sps <- c()
+           while (length(p2.sps)<=10000){
+               p1.sp <- rbeta(1, alps[1], bets[1])
+               p2.sp <- rbeta(1, alps[2], bets[2])
+               if (p1.sp < p2.sp){
+                   p1.sps <- c(p1.sps, p1.sp)
+                   p2.sps <- c(p2.sps, p2.sp)
+               }
+
+           }
+           p1.over <- mean(p1.sps>=phi)
+           p1.odds <- p1.over / (1 - p1.over)
+           p2.over <- mean(p2.sps>=phi)
+           p2.odds <- p2.over / (1 - p2.over)
+           p3.odds <- Inf
+       }else{
+           p1.sps <- c() 
+           p2.sps <- c()
+           p3.sps <- c()
+           while (length(p2.sps)<=10000){
+               p1.sp <- rbeta(1, alps[1], bets[1])
+               p2.sp <- rbeta(1, alps[2], bets[2])
+               p3.sp <- rbeta(1, alps[3], bets[3])
+               if (p1.sp < p2.sp & p2.sp < p3.sp){
+                   p1.sps <- c(p1.sps, p1.sp)
+                   p2.sps <- c(p2.sps, p2.sp)
+                   p3.sps <- c(p3.sps, p3.sp)
+               }
+
+           }
+           p1.over <- mean(p1.sps>=phi)
+           p1.odds <- p1.over / (1 - p1.over)
+           p2.over <- mean(p2.sps>=phi)
+           p2.odds <- p2.over / (1 - p2.over)
+           p3.over <- mean(p3.sps>=phi)
+           p3.odds <- p3.over / (1 - p3.over)
+       }
+
+       if (over.doses[3]==1){
+           p3.odds <- Inf
+       }
+       
+       oddss <- c(p1.odds, p2.odds, p3.odds)
+       final.action <- which.min(abs(log(oddss)))
+       return(final.action)
+   }
+}
 
 # Simulation function
 butterfly.simu.fn <- function(phi, p.true, ncohort=12,
