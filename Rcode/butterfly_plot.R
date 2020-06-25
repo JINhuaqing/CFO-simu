@@ -1,6 +1,8 @@
 #rm(list=ls())
+setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/Rcode")
 library(magrittr)
 library(TruncatedDistributions)
+source("butterfly_utils.R")
 
 
 # probabilities of De-escalation, Stay or Escalation
@@ -145,10 +147,10 @@ p.true5 <- c(0.07, 0.13, 0.21)
 p.true6 <- c(0.04, 0.1, 0.2) 
 
 ncohort <- 12
-cohortsize <- 1
+cohortsize <- 3
 m <- 10
 add.args <- list(alp.prior=0.5, bet.prior=0.5, p.prior=c(0.1, 0.2, 0.3))# Choose this prior only for plotting
-res <- butterfly.simu.plot.fn(phi, p.true3, ncohort=ncohort, cohortsize=cohortsize, m=m, type="BB", add.args=add.args)
+res <- butterfly.simu.plot.fn(phi, p.true1, ncohort=ncohort, cohortsize=cohortsize, m=m, type="BB", add.args=add.args)
 
 post.dists <- res$post.dists
 length(post.dists)
@@ -156,7 +158,7 @@ BOINint <- BOIN.int(phi)
 
 #setwd("/Users/jinhuaqing/Downloads")
 setwd("C:/Users/Dell/Downloads")
-png("s3_m10.png", height=1200,width=900, res=100)
+png("test.png", height=1200,width=900, res=100)
 par(mfrow=c(4, 3))
 for (i in 1:length(post.dists)){
     post.dist <- post.dists[[i]]
