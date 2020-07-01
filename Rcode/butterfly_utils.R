@@ -217,8 +217,7 @@ overdose.fn <- function(phi, type="BB", add.args=list()){
         }else{
             return(FALSE)
         }
-    }else{
-
+    }else if (type=="BB+CRM"){
         y <- add.args$y
         n <- add.args$n
         alp.prior <- add.args$alp.prior
@@ -239,8 +238,18 @@ overdose.fn <- function(phi, type="BB", add.args=list()){
         }else{
             return(FALSE)
         }
+    }else if (type=="BB+"){
+        y <- add.args$y
+        n <- add.args$n
+        alp.prior <- add.args$alp.prior
+        bet.prior <- add.args$bet.prior
+        pp <- post.prob.fn(phi, y, n, alp.prior, bet.prior)
+        if ((pp >= 0.95) & (add.args$n>=3)){
+            return(TRUE)
+        }else{
+            return(FALSE)
+        }
     }
-    
 }
 
 #phi <- 0.2
@@ -251,7 +260,7 @@ overdose.fn <- function(phi, type="BB", add.args=list()){
 #bet.prior <- 0.1
 
 # Function to make a decision based on the odds close to 1 most
-make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses){
+make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses, diag=FALSE){
    if (over.doses[2]==1){
        return(1)
    }else{
@@ -261,6 +270,8 @@ make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses)
        p2.odds <- (1-p2.under)/p2.under
 
        p2.sps <- rbeta(10000, alps[2], bets[2])
+       p1.sps <- NULL
+       p3.sps <- NULL
        if (!is.na(ys[1])){
            p1.sps <- tbeta.sampler.up(p2.sps, alps[1], bets[1])
            p1.over <- mean(p1.sps>=phi)
@@ -278,10 +289,72 @@ make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses)
        
        oddss <- c(p1.odds, p2.odds, p3.odds)
        final.action <- which.min(abs(log(oddss)))
-       return(final.action)
+       if (diag){
+           rev <- list(final.action=final.action, 
+                       p1.sps=p1.sps, 
+                       p2.sps=p2.sps,
+                       p3.sps=p3.sps,
+                       oddss=oddss)
+           return(rev)
+       }else{
+           return(final.action)
+       }
    }
 }
 
+
+# Function to make a decision based on the 
+# Pr(\theta_R>\phi|D)/Pr(\theta_C>\phi|D) and 
+# Pr(\theta_L<\phi|D)/Pr(\theta_C<\phi|D).
+make.decision.BF.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses, diag=FALSE){
+   if (over.doses[2]==1){
+       return(1)
+   }else{
+       alps <- ys + alp.prior
+       bets <- ns - ys + bet.prior
+       p2.under <- pbeta(phi, alps[2], bets[2])
+       p2.over <- 1 - p2.under
+
+       p2.sps <- rbeta(10000, alps[2], bets[2])
+       p1.sps <- NULL
+       p3.sps <- NULL
+       if (!is.na(ys[1])){
+           p1.sps <- tbeta.sampler.up(p2.sps, alps[1], bets[1])
+           p1.under <- mean(p1.sps<=phi)
+           p.under.BF <- p1.under/p2.under
+       }else{
+           p.under.BF <- Inf
+       }
+       if (!(is.na(ys[3]) | over.doses[3]==1) ){
+           p3.sps <- tbeta.sampler.low(p2.sps, alps[3], bets[3])
+           p3.over <- mean(p3.sps>=phi)
+           p.over.BF <- p3.over/p2.over
+       }else{
+           p.over.BF <- Inf
+       }
+       CV1 <- 2
+       CV2 <- 2
+       dec.over <- (log10(p.over.BF)>CV1) 
+       dec.under <-  (log10(p.under.BF)>CV2)
+       if (dec.over & (!dec.under)){
+           final.action <- 1
+       }else if (dec.under & (!dec.over)){
+           final.action <- 3
+       }else{
+           final.action <- 2
+       }
+       if (diag){
+           rev <- list(final.action=final.action, 
+                       p1.sps=p1.sps, 
+                       p2.sps=p2.sps,
+                       p3.sps=p3.sps,
+                       BFs=c(p.under.BF, p.over.BF))
+           return(rev)
+       }else{
+           return(final.action)
+       }
+   }
+}
  
 # Function to make a decision based on the odds close to 1 most
 # with ditribution p1 < p2 < p3 
@@ -404,8 +477,14 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
         cn <- tns[cidx]
         
         add.args.od <- c(list(y=cy, n=cn, tys=tys, tns=tns, cidx=cidx), add.args)
+        if (type!="CRM" | type!="BB+CRM"){
+            typeod <- "BB+"
+        }else{
+            typeod <- type
+        }
+
         
-        if (overdose.fn(phi, type, add.args.od)){
+        if (overdose.fn(phi, typeod, add.args.od)){
             tover.doses[cidx:ndose] <- 1
         }
         
@@ -449,6 +528,11 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
             alp.prior <- add.args$alp.prior
             bet.prior <- add.args$bet.prior
             idx.chg <- make.decision.odds.fn(phi, cys, cns, alp.prior, bet.prior, cover.doses) - 2
+        }else if (type=="BF"){
+            alp.prior <- add.args$alp.prior
+            bet.prior <- add.args$bet.prior
+            idx.chg <- make.decision.BF.fn(phi, cys, cns, alp.prior, bet.prior, cover.doses) - 2
+
         }
 
         cidx <- idx.chg + cidx

@@ -20,11 +20,10 @@ crm.simu.fn <-function(target = 0.30, ## Target toxicity pr
     
     
     
-    ndose <- length(p.true)
     if (missing(p.prior)){
         p.prior <- getprior(0.05, target, ceiling(ndose/2), ndose)
     }
-    ndose = length(p.prior);
+    ndose <- length(p.true)
     sel=rep(0,ndose);
     pts=rep(0,ndose);
     dlt=rep(0,ndose);
