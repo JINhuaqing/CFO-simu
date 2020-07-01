@@ -1,7 +1,7 @@
 library(TruncatedDistributions)
 library(BOIN)
 source("utilities.R")
-set.seed(10)
+#set.seed(10)
 # Compute BOIN interval based on target DLT rate
 BOIN.int <- function(phi, phiL, phiU){
     if (missing(phiL)) {phiL <- 0.6 * phi}
@@ -262,7 +262,16 @@ overdose.fn <- function(phi, type="BB", add.args=list()){
 # Function to make a decision based on the odds close to 1 most
 make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses, diag=FALSE){
    if (over.doses[2]==1){
-       return(1)
+       if (diag){
+           rev <- list(final.action=1,
+                       p1.sps=NULL,
+                       p2.sps=NULL,
+                       p3.sps=NULL,
+                       oddss=c(NULL, NULL, NULL))
+           return(rev)
+       }else{
+           return(1)
+       }
    }else{
        alps <- ys + alp.prior
        bets <- ns - ys + bet.prior
@@ -308,7 +317,16 @@ make.decision.odds.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses,
 # Pr(\theta_L<\phi|D)/Pr(\theta_C<\phi|D).
 make.decision.BF.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses, diag=FALSE){
    if (over.doses[2]==1){
-       return(1)
+       if (diag){
+           rev <- list(final.action=1,
+                       p1.sps=NULL,
+                       p2.sps=NULL,
+                       p3.sps=NULL,
+                       BFs=c(NULL, NULL))
+           return(rev)
+       }else{
+           return(1)
+       }
    }else{
        alps <- ys + alp.prior
        bets <- ns - ys + bet.prior
@@ -323,23 +341,23 @@ make.decision.BF.fn <- function(phi, ys, ns, alp.prior, bet.prior, over.doses, d
            p1.under <- mean(p1.sps<=phi)
            p.under.BF <- p1.under/p2.under
        }else{
-           p.under.BF <- Inf
+           p.under.BF <- 0.1
        }
        if (!(is.na(ys[3]) | over.doses[3]==1) ){
            p3.sps <- tbeta.sampler.low(p2.sps, alps[3], bets[3])
            p3.over <- mean(p3.sps>=phi)
            p.over.BF <- p3.over/p2.over
        }else{
-           p.over.BF <- Inf
+           p.over.BF <- 0.1
        }
-       CV1 <- 2
-       CV2 <- 2
+       CV1 <- 0.5
+       CV2 <- 0.5
        dec.over <- (log10(p.over.BF)>CV1) 
        dec.under <-  (log10(p.under.BF)>CV2)
        if (dec.over & (!dec.under)){
-           final.action <- 1
-       }else if (dec.under & (!dec.over)){
            final.action <- 3
+       }else if (dec.under & (!dec.over)){
+           final.action <- 1
        }else{
            final.action <- 2
        }
