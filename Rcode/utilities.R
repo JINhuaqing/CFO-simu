@@ -235,3 +235,24 @@ res.ggplot.fn <- function(res, filename, main, M.names, is.save=TRUE, angle=NULL
     }
 }
 
+
+# Plot the randomly generated dose levels
+gen.rand.doses.plot <- function(cases, phi){
+    ncase <- length(cases)
+    case <- cases[[1]]
+    ndose <- length(case$p.trues)
+    plot(1:ndose, case$p.trues, type="b", ylim=c(0, 1), ylab="Prob of toxicity", xlab="Dose levels", xaxt="n")
+    points(case$mtd.level, case$p.trues[case$mtd.level], pch=19, col=1)
+    axis(1, at=1:ndose, labels=1:ndose)
+    for (i in 2:ncase){
+        ccase <- cases[[i]]
+        lines(1:ndose, ccase$p.trues, type="b", ylim=c(0, 1), lty=i)
+        points(ccase$mtd.level, ccase$p.trues[ccase$mtd.level], pch=19, col=1)
+        i <- i + 1
+    }
+    abline(h=phi, col=2, lwd=2)
+    legend("topleft", legend=c("Target prob", "MTD level"), col=c(2, 1), pch=c(NA, 19), 
+           lty=c(1, NA), lwd=c(2, 1))
+    
+}
+
