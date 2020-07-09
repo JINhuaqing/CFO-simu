@@ -551,6 +551,13 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
             bet.prior <- add.args$bet.prior
             idx.chg <- make.decision.BF.fn(phi, cys, cns, alp.prior, bet.prior, cover.doses) - 2
 
+        }else if (type=="BMS"){
+            m <- add.args$m
+            alp.prior <- add.args$alp.prior
+            bet.prior <- add.args$bet.prior
+            ps <- BMS.model.prob(phi, cys, cns, cover.doses)
+            final.action <- make.move.fn(ps, m=m)
+            idx.chg <- final.action - 2
         }
 
         cidx <- idx.chg + cidx
@@ -786,7 +793,7 @@ BMS.prob2R <- function(phi, cys, cns, model="C"){
     }else if (model=="R"){
         p2.sps <- runif(10000, min=0, max=phi)
         itm1 <- phi**yR * (1-phi)**(nR-yR)
-        itm2.all <- p1.sps**yL*(1-p1.sps)**(nL-yL) * p2.sps**yC*(1-p2.sps)**(nC-yC)
+        itm2.all <- p2.sps**yC*(1-p2.sps)**(nC-yC)
         itm2 <- mean(itm2.all)
         return(itm1*itm2)
     }

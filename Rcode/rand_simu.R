@@ -9,7 +9,7 @@ source("butterfly_utils.R")
 target <- 0.3
 ncohort <- 10
 cohortsize <- 3
-m <- 10
+m <- 1
 
 p.prior <- c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7)
 add.args <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=m)
@@ -30,15 +30,16 @@ add.args <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=m)
 # dose 7, mu1=mu2=0.56, 0.1
 # dose 7, mu1=mu2=0.74, 0.15
 
-mu <- 0.42
+mu <- 0.53
 run.fn <- function(k){
     print(k)
-    p.true.all <- gen.rand.doses(7, target, mu1=mu, mu2=mu)
+    p.true.all <- gen.rand.doses(5, target, mu1=mu, mu2=mu)
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
     butterfly.bf.res <- butterfly.simu.fn(target, p.true, type="BF", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-    butterfly.odds.res <- butterfly.simu.fn(target, p.true, type="Odds", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+    butterfly.bms.res <- butterfly.simu.fn(target, p.true, type="BMS", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+#    butterfly.odds.res <- butterfly.simu.fn(target, p.true, type="Odds", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.bb.res <- butterfly.simu.fn(target, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.crm.res <- butterfly.simu.fn(target, p.true, type="CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.bbcrm.res <- butterfly.simu.fn(target, p.true, type="BB+CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
@@ -47,7 +48,8 @@ run.fn <- function(k){
 
     ress <- list(
                  butterfly.bf = butterfly.bf.res, 
-                 butterfly.odds = butterfly.odds.res, 
+                 butterfly.bms = butterfly.bms.res, 
+#                 butterfly.odds = butterfly.odds.res, 
 #                 butterfly.bb = butterfly.bb.res, 
 #                 butterfly.crm = butterfly.crm.res, 
 #                 butterfly.bbcrm = butterfly.bbcrm.res, 
@@ -73,8 +75,8 @@ run.fn <- function(k){
     #print(butterfly.bf.res)
     #}
 nsimu <- 10000
-file.name <- paste0("../results/", "Simu", nsimu, "Level_7_07",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=7)
+file.name <- paste0("../results/", "Simu", nsimu, "Level_5_10_m1",  ".RData")
+results <- mclapply(1:nsimu, run.fn, mc.cores=1)
 save(results, file=file.name)
 post.process.random(results)
 
