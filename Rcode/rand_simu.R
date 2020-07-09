@@ -6,6 +6,7 @@ source("boin_utils.R")
 source("butterfly_utils.R")
 
 
+set.seed(10)
 target <- 0.3
 ncohort <- 10
 cohortsize <- 3

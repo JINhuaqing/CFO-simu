@@ -558,12 +558,12 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
             ps <- BMS.model.prob(phi, cys, cns, cover.doses)
             final.action <- make.move.fn(ps, m=m)
             idx.chg <- final.action - 2
+        #print(c(ps, idx.chg, cidx))
+        #print(c(tys, tns, tover.doses))
+        #print(c(cys, cns, cover.doses))
         }
 
         cidx <- idx.chg + cidx
-        #print(c(ps, idx.chg))
-        #print(c(tys, tns, tover.doses))
-        #print(c(cys, cns, cover.doses))
         
     }
     
@@ -800,29 +800,28 @@ BMS.prob2R <- function(phi, cys, cns, model="C"){
     
 }
 
+phi <- 0.2
+cys <- c(NA, 1, 4)
+cns <- c(NA, 3, 6)
+cover.doses <- c(NA, 0, 1)
+
 BMS.model.prob <- function(phi, cys, cns, cover.doses){
     if (cover.doses[2]==1){
         ps <- c(1, 0, 0)
     }else{
         if (is.na(cys[1]) & (cover.doses[3]==1)){
             ps <- c(0, 1, 0)
-        }
-        
-        if (is.na(cys[1]) & (!(cover.doses[3]==1))){
+        }else  if (is.na(cys[1]) & (!(cover.doses[3]==1))){
             pC <- BMS.prob2R(phi, cys, cns, "C")    
             pR <- BMS.prob2R(phi, cys, cns, "R")    
             ups <- c(0, pC, pR)
             ps <- ups/sum(ups)
-        }
-        
-        if (is.na(cys[3]) | (cover.doses[3]==1)){
+        }else  if (is.na(cys[3]) | (cover.doses[3]==1)){
             pL <- BMS.prob2L(phi, cys, cns, "L")    
             pC <- BMS.prob2L(phi, cys, cns, "C")    
             ups <- c(pL, pC, 0)
             ps <- ups/sum(ups)
-        }
-        
-        if (!(is.na(cys[1]) | is.na(cys[3]) | cover.doses[3]==1)){
+        }else  if (!(is.na(cys[1]) | is.na(cys[3]) | cover.doses[3]==1)){
             pL <- BMS.prob3(phi, cys, cns, "L")    
             pC <- BMS.prob3(phi, cys, cns, "C")    
             pR <- BMS.prob3(phi, cys, cns, "R")    
