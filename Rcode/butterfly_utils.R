@@ -556,8 +556,12 @@ butterfly.simu.fn <- function(phi, p.true, ncohort=12,
             alp.prior <- add.args$alp.prior
             bet.prior <- add.args$bet.prior
             ps <- BMS.model.prob(phi, cys, cns, cover.doses)
-            final.action <- make.move.fn(ps, m=m)
-            idx.chg <- final.action - 2
+            if (m!=Inf){
+                final.action <- make.move.fn(ps, m=m)
+                idx.chg <- final.action - 2
+            }else{
+                idx.chg <- which.max(ps) - 2
+            }
         #print(c(ps, idx.chg, cidx))
         #print(c(tys, tns, tover.doses))
         #print(c(cys, cns, cover.doses))
