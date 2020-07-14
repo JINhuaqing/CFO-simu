@@ -681,12 +681,13 @@ post.process.raw <- function(ress){
 
 
 # R code Related to BMS method
+# up.lim=0.6 is good  
 
 sample.ML <- function(phi, up.lim, N=10000){
     # phi: Target toxicity
     # N : the number of samples
     if (missing(up.lim)){
-        up.lim <- 0.6
+        up.lim <- 2*phi
     }
     sps.all <- runif(2*N, min=phi, max=up.lim)
     sps.all <- matrix(sps.all, ncol=2)
@@ -700,7 +701,7 @@ sample.MC <- function(phi, up.lim, N=10000){
     # phi: Target toxicity
     # N : the number of samples
     if (missing(up.lim)){
-        up.lim <- 0.6
+        up.lim <- 2*phi
     }
     
     p1.sps <- runif(N, min=0, max=phi)
@@ -766,7 +767,7 @@ BMS.prob2L <- function(phi, cys, cns, model="L"){
     nC <- cns[2]
     
     if (model=="L"){
-        p2.sps <- runif(10000, min=phi, max=0.6)
+        p2.sps <- runif(10000, min=phi, max=2*phi)
         itm1 <- phi**yL * (1-phi)**(nL-yL)
         itm2.all <- p2.sps**yC*(1-p2.sps)**(nC-yC)
         itm2 <- mean(itm2.all)
@@ -789,7 +790,7 @@ BMS.prob2R <- function(phi, cys, cns, model="C"){
     nR <- cns[3]
     
     if (model=="C"){
-        p3.sps <- runif(10000, min=phi, max=0.6)
+        p3.sps <- runif(10000, min=phi, max=2*phi)
         itm1 <- phi**yC * (1-phi)**(nC-yC)
         itm2.all <- p3.sps**yR*(1-p3.sps)**(nR-yR)
         itm2 <- mean(itm2.all)
@@ -804,10 +805,10 @@ BMS.prob2R <- function(phi, cys, cns, model="C"){
     
 }
 
-phi <- 0.2
-cys <- c(NA, 1, 4)
-cns <- c(NA, 3, 6)
-cover.doses <- c(NA, 0, 1)
+#phi <- 0.2
+#cys <- c(NA, 1, 4)
+#cns <- c(NA, 3, 6)
+#cover.doses <- c(NA, 0, 1)
 
 BMS.model.prob <- function(phi, cys, cns, cover.doses){
     if (cover.doses[2]==1){

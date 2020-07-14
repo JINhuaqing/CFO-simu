@@ -87,7 +87,7 @@ run.fn <- function(k){
     #}
 
 nsimu <- 10000
-file.name <- paste0("../results/", "Simu", nsimu, "Level_5_10_ms",  ".RData")
+file.name <- paste0("../results/", "Simu", nsimu, "Level_5_10_ms_up09",  ".RData")
 results <- mclapply(1:nsimu, run.fn, mc.cores=20)
 save(results, file=file.name)
 post.process.random(results)
