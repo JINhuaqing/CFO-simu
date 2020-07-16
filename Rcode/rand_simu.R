@@ -8,11 +8,11 @@ source("butterfly_utils.R")
 
 #set.seed(10)
 target <- 0.3
-ncohort <- 10
-cohortsize <- 3
+ncohort <- 30
+cohortsize <- 1
 m <- 50
 
-p.prior <- c(0.1, 0.2, 0.3, 0.4, 0.5)#, 0.6, 0.7)
+p.prior <- c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7)
 add.args <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=m)
 add.args1 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=1)
 add.args2 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=10)
@@ -35,10 +35,10 @@ add.args4 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=Inf)
 # dose 7, mu1=mu2=0.56, 0.1
 # dose 7, mu1=mu2=0.74, 0.15
 
-mu <- 0.53
+mu <- 0.56
 run.fn <- function(k){
     print(k)
-    p.true.all <- gen.rand.doses(5, target, mu1=mu, mu2=mu)
+    p.true.all <- gen.rand.doses(7, target, mu1=mu, mu2=mu)
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
@@ -87,7 +87,7 @@ run.fn <- function(k){
     #}
 
 nsimu <- 10000
-file.name <- paste0("../results/", "Simu", nsimu, "Level_5_10_ms_up09",  ".RData")
+file.name <- paste0("../results/", "Simu", nsimu, "Level_7_10_ms_corhortsize1",  ".RData")
 results <- mclapply(1:nsimu, run.fn, mc.cores=20)
 save(results, file=file.name)
 post.process.random(results)
