@@ -1,16 +1,11 @@
 rm(list=ls())
-setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/Rcode")
+#setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/Rcode")
+setwd("/Users/jinhuaqing/Documents/Projects_Code/phaseI/Rcode")
 source("utilities.R")
 source("butterfly_utils.R")
+library(magrittr)
 
 
-phi <- 0.3
-y1 <- 1
-n1 <- 10
-y2 <- 2
-n2 <- 20
-alp.prior <- phi
-bet.prior <- 1 - phi
 
 Odds.samples <- function(y1, n1, y2, n2, alp.prior, bet.prior){
     alp1 <- alp.prior + y1
@@ -80,6 +75,8 @@ All.OR.table <- function(phi, n1, n2, type, alp.prior, bet.prior){
    ret.mat
 }
 
+# compute the marginal prob when lower < phiL/phiC/phiR < upper
+# i.e., Pr(Y=y|lower<phi<upper)
 margin.phi <- function(y, n, lower, upper){
     C <- 1/(upper-lower)
     fn <- function(phi) {
@@ -88,12 +85,84 @@ margin.phi <- function(y, n, lower, upper){
     integrate(fn, lower=lower, upper=upper)$value
 }
 
-vs <- c()
-for (y in 0:5){
-    v <- margin.phi(y, 5, 0, phi)
-    vs <- c(v, vs)
+# Obtain the table of marginal distribution of (y1, y2) 
+# after intergrate out (phi1, phi2)
+# under H0 and H1
+# H0: phi1=phi, phi < phi2 < 2phi
+# H1: phi2=phi, 0   < phi1 < phi
+margin.ys.table <- function(n1, n2, phi, hyperthesis){
+    if (hyperthesis=="H0"){
+        p.y1s <- dbinom(0:n1, n1, phi)
+        p.y2s <- sapply(0:n2, margin.phi, n=n2, lower=phi, upper=2*phi)
+    }else if (hyperthesis=="H1"){
+        p.y1s <- sapply(0:n1, margin.phi, n=n1, lower=0, upper=phi)
+        p.y2s <- dbinom(0:n2, n2, phi)
+    }
+    p.y1s.mat <- matrix(rep(p.y1s, n2+1), nrow=n1+1)
+    p.y2s.mat <- matrix(rep(p.y2s, n1+1), nrow=n1+1, byrow=TRUE)
+    margin.ys <- p.y1s.mat * p.y2s.mat
+    margin.ys
 }
 
+# Obtain the optimal gamma for the hypothesis test
+optim.gamma.fn <- function(n1, n2, phi, type, alp.prior, bet.prior){
+    OR.table <- All.OR.table(phi, n1, n2, type, alp.prior, bet.prior) 
+    ys.table.H0 <- margin.ys.table(n1, n2, phi, "H0")
+    ys.table.H1 <- margin.ys.table(n1, n2, phi, "H1")
+    
+    argidx <- order(OR.table)
+    sort.OR.table <- OR.table[argidx]
+    sort.ys.table.H0 <- ys.table.H0[argidx]
+    sort.ys.table.H1 <- ys.table.H1[argidx]
+    n.tol <- length(sort.OR.table)
+    
+    if (type=="L"){
+        errs <- rep(0, n.tol-1)
+        for (i in 1:(n.tol-1)){
+            err1 <- sum(sort.ys.table.H0[1:i])
+            err2 <- sum(sort.ys.table.H1[(i+1):n.tol])
+            err <- err1 + err2
+            errs[i] <- err
+        }
+        min.err <- min(errs)
+        if (min.err > 1){
+            gam <- 0
+            min.err <- 1
+        }else {
+            minidx <- which.min(errs)
+            gam <- sort.OR.table[minidx]
+        }
+    }else if (type=='R'){
+        errs <- rep(0, n.tol-1)
+        for (i in 1:(n.tol-1)){
+            err1 <- sum(sort.ys.table.H1[1:i])
+            err2 <- sum(sort.ys.table.H0[(i+1):n.tol])
+            err <- err1 + err2
+            errs[i] <- err
+        }
+        min.err <- min(errs)
+        if (min.err > 1){
+            gam <- 0
+            min.err <- 1
+        }else {
+            minidx <- which.min(errs)
+            gam <- sort.OR.table[minidx]
+        }
+        
+    }
+    list(gamma=gam, min.err=min.err)
+}
+
+phi <- 0.2
+y1 <- 1
+n1 <- 5
+y2 <- 3
+n2 <- 9
+alp.prior <- phi
+bet.prior <- 1 - phi
+
+optim.gamma.fn(n1, n2, phi, "L", alp.prior, bet.prior)
+OR.values(phi, y1, n1, y2, n2, alp.prior, bet.prior, type="L")
+optim.gamma.fn(n1, n2, phi, "R", alp.prior, bet.prior)
 OR.values(phi, y1, n1, y2, n2, alp.prior, bet.prior, type="R")
-All.OR.table(phi, n1, n2, "R", alp.prior, bet.prior)
-All.OR.table(phi, n1, n2, "L", alp.prior, bet.prior)
+
