@@ -46,9 +46,10 @@ run.fn <- function(k){
 
     bf.res <- BF.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     bms1.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args1)
-    bms2.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
-    bms3.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
-    bms4.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
+    orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+#    bms2.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
+#    bms3.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
+#    bms4.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
 #    butterfly.odds.res <- butterfly.simu.fn(target, p.true, type="Odds", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.bb.res <- butterfly.simu.fn(target, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.crm.res <- butterfly.simu.fn(target, p.true, type="CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
@@ -58,10 +59,11 @@ run.fn <- function(k){
 
     ress <- list(
                  bf = bf.res, 
+                 orm=orm.res,
                  bms1 = bms1.res, 
-                 bms2 = bms2.res, 
-                 bms3 = bms3.res, 
-                 bms4 = bms4.res, 
+#                 bms2 = bms2.res, 
+#                 bms3 = bms3.res, 
+#                 bms4 = bms4.res, 
 #                 butterfly.od1ds = butterfly.odds.res, 
 #                 butterfly.bb = butterfly.bb.res, 
 #                 butterfly.crm = butterfly.crm.res, 
@@ -88,9 +90,9 @@ run.fn <- function(k){
     #print(butterfly.bf.res)
     #}
 
-nsimu <- 10000
+nsimu <- 10
 file.name <- paste0("../results/", "Simu", nsimu, "Level_7_10_ms_corhortsize1",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=20)
-save(results, file=file.name)
+results <- mclapply(1:nsimu, run.fn, mc.cores=10)
 post.process.random(results)
+save(results, file=file.name)
 
