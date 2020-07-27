@@ -260,3 +260,10 @@ gen.rand.doses.plot <- function(cases, phi){
     
 }
 
+# posterior probability of pj >= phi given data
+post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
+    alp <- alp.prior + y 
+    bet <- bet.prior + n - y
+    1 - pbeta(phi, alp, bet)
+}
+

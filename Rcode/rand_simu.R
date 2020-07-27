@@ -3,7 +3,9 @@ library(parallel)
 source("utilities.R")
 source("crm_utils.R")
 source("boin_utils.R")
-source("butterfly_utils.R")
+source("BF_utils.R")
+source("ORM_utils.R")
+source("BMS_utils.R")
 
 
 #set.seed(10)
@@ -42,11 +44,11 @@ run.fn <- function(k){
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
-    butterfly.bf.res <- butterfly.simu.fn(target, p.true, type="BF", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-    butterfly.bms1.res <- butterfly.simu.fn(target, p.true, type="BMS", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args1)
-    butterfly.bms2.res <- butterfly.simu.fn(target, p.true, type="BMS", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
-    butterfly.bms3.res <- butterfly.simu.fn(target, p.true, type="BMS", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
-    butterfly.bms4.res <- butterfly.simu.fn(target, p.true, type="BMS", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
+    bf.res <- BF.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+    bms1.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args1)
+    bms2.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
+    bms3.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
+    bms4.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
 #    butterfly.odds.res <- butterfly.simu.fn(target, p.true, type="Odds", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.bb.res <- butterfly.simu.fn(target, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.crm.res <- butterfly.simu.fn(target, p.true, type="CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
@@ -55,11 +57,11 @@ run.fn <- function(k){
     boin.res <- boin.simu.fn(target=target, p.true=p.true, ncohort=ncohort, cohortsize)
 
     ress <- list(
-                 butterfly.bf = butterfly.bf.res, 
-                 butterfly.bms1 = butterfly.bms1.res, 
-                 butterfly.bms2 = butterfly.bms2.res, 
-                 butterfly.bms3 = butterfly.bms3.res, 
-                 butterfly.bms4 = butterfly.bms4.res, 
+                 bf = bf.res, 
+                 bms1 = bms1.res, 
+                 bms2 = bms2.res, 
+                 bms3 = bms3.res, 
+                 bms4 = bms4.res, 
 #                 butterfly.od1ds = butterfly.odds.res, 
 #                 butterfly.bb = butterfly.bb.res, 
 #                 butterfly.crm = butterfly.crm.res, 
