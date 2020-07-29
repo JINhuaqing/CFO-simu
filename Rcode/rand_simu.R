@@ -14,7 +14,7 @@ ncohort <- 30
 cohortsize <- 1
 m <- 50
 
-p.prior <- c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7)
+p.prior <- c(0.1, 0.2, 0.3, 0.4, 0.5)#, 0.6, 0.7)
 add.args <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=m)
 add.args1 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=1)
 add.args2 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=10)
@@ -37,19 +37,19 @@ add.args4 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=Inf)
 # dose 7, mu1=mu2=0.56, 0.1
 # dose 7, mu1=mu2=0.74, 0.15
 
-mu <- 0.56
+mu <- 0.53
 run.fn <- function(k){
     print(k)
-    p.true.all <- gen.rand.doses(7, target, mu1=mu, mu2=mu)
+    p.true.all <- gen.rand.doses(5, target, mu1=mu, mu2=mu)
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
     bf.res <- BF.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     bms1.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args1)
     orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-#    bms2.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
-#    bms3.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
-#    bms4.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
+    bms2.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
+    bms3.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
+    bms4.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
 #    butterfly.odds.res <- butterfly.simu.fn(target, p.true, type="Odds", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.bb.res <- butterfly.simu.fn(target, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 #    butterfly.crm.res <- butterfly.simu.fn(target, p.true, type="CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
@@ -61,9 +61,9 @@ run.fn <- function(k){
                  bf = bf.res, 
                  orm=orm.res,
                  bms1 = bms1.res, 
-#                 bms2 = bms2.res, 
-#                 bms3 = bms3.res, 
-#                 bms4 = bms4.res, 
+                 bms2 = bms2.res, 
+                 bms3 = bms3.res, 
+                 bms4 = bms4.res, 
 #                 butterfly.od1ds = butterfly.odds.res, 
 #                 butterfly.bb = butterfly.bb.res, 
 #                 butterfly.crm = butterfly.crm.res, 
@@ -82,17 +82,10 @@ run.fn <- function(k){
     ress
 }
 
-#for (i in 1:20){
-    #p.true.all <- gen.rand.doses(5, target, mu1=0.60, mu2=0.50)
-    #p.true <- p.true.all$p.true
-    #tmtd <- p.true.all$mtd.level
-    #butterfly.bf.res <- butterfly.simu.fn(target, p.true, type="BF", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-    #print(butterfly.bf.res)
-    #}
 
-nsimu <- 10
+nsimu <- 10000
 file.name <- paste0("../results/", "Simu", nsimu, "Level_7_10_ms_corhortsize1",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=10)
+results <- mclapply(1:nsimu, run.fn, mc.cores=15)
 post.process.random(results)
 save(results, file=file.name)
 
