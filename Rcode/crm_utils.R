@@ -16,7 +16,7 @@ posterior <- function(alpha, p, y, d) {
 posttoxf <- function(alpha, p, y, d, j) { p[j]^(exp(alpha))*posterior(alpha, p, y, d); }
 
 crm.simu.fn <-function(target = 0.30, ## Target toxicity pr
-              p.true, p.prior, cohortsize=1, ncohort=12, p.eli = 0.95){
+              p.true, p.prior, init.level=1, cohortsize=1, ncohort=12, p.eli = 0.95){
     
     
     
@@ -32,7 +32,7 @@ crm.simu.fn <-function(target = 0.30, ## Target toxicity pr
         
     y=NULL;  #binary outcome
     d=NULL;  #dose level
-    dose.curr = ceiling(ndose/2);  # current dose level
+    dose.curr = init.level
     stop=0; #indicate if trial stops early
     for(i in 1:ncohort)
     {

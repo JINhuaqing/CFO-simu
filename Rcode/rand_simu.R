@@ -10,8 +10,8 @@ source("BMS_utils.R")
 
 #set.seed(10)
 target <- 0.3
-ncohort <- 30
-cohortsize <- 1
+ncohort <- 10
+cohortsize <- 3
 m <- 50
 
 p.prior <- c(0.1, 0.2, 0.3, 0.4, 0.5)#, 0.6, 0.7)
@@ -44,30 +44,20 @@ run.fn <- function(k){
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
-    bf.res <- BF.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     bms1.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args1)
     orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     bms2.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args2)
     bms3.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args3)
     bms4.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args4)
-#    butterfly.odds.res <- butterfly.simu.fn(target, p.true, type="Odds", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-#    butterfly.bb.res <- butterfly.simu.fn(target, p.true, type="BB", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-#    butterfly.crm.res <- butterfly.simu.fn(target, p.true, type="CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-#    butterfly.bbcrm.res <- butterfly.simu.fn(target, p.true, type="BB+CRM", ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     crm.res <- crm.simu.fn(target=target, p.true=p.true, p.prior=p.prior, cohortsize=cohortsize, ncohort=ncohort)
     boin.res <- boin.simu.fn(target=target, p.true=p.true, ncohort=ncohort, cohortsize)
 
     ress <- list(
-                 bf = bf.res, 
                  orm=orm.res,
                  bms1 = bms1.res, 
                  bms2 = bms2.res, 
                  bms3 = bms3.res, 
                  bms4 = bms4.res, 
-#                 butterfly.od1ds = butterfly.odds.res, 
-#                 butterfly.bb = butterfly.bb.res, 
-#                 butterfly.crm = butterfly.crm.res, 
-#                 butterfly.bbcrm = butterfly.bbcrm.res, 
                  crm = crm.res, 
                  boin = boin.res, 
                  paras=list(p.true=p.true, 
@@ -84,7 +74,7 @@ run.fn <- function(k){
 
 
 nsimu <- 10000
-file.name <- paste0("../results/", "Simu", nsimu, "Level_7_10_ms_corhortsize1",  ".RData")
+file.name <- paste0("../results/", "Simu", nsimu, "Level_5_10_ms_corhortsize3",  ".RData")
 results <- mclapply(1:nsimu, run.fn, mc.cores=15)
 post.process.random(results)
 save(results, file=file.name)

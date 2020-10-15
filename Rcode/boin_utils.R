@@ -1,6 +1,6 @@
 library(BOIN)
 
-boin.simu.fn <- function(target, p.true, ncohort, cohortsize){
+boin.simu.fn <- function(target, p.true, ncohort, cohortsize, init.level=1){
     if (cohortsize > 1) {
         temp = get.boundary(target, ncohort, cohortsize, n.earlystop = ncohort*cohortsize)$full_boundary_tab
     } else {
@@ -14,7 +14,7 @@ boin.simu.fn <- function(target, p.true, ncohort, cohortsize){
     y <- rep(0, ndose)
     n <- rep(0, ndose)
     earlystop = 0
-    d = ceiling(ndose/2)
+    d = init.level
     npts <- cohortsize * ncohort
     elimi = rep(0, ndose)
     for (i in 1:ncohort) {

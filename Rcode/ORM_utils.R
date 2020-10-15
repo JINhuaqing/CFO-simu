@@ -208,7 +208,7 @@ overdose.fn <- function(phi, add.args=list()){
 }
 
 # Simulation function for ORM 
-ORM.simu.fn <- function(phi, p.true, ncohort=12,
+ORM.simu.fn <- function(phi, p.true, ncohort=12, init.level=1, 
                               cohortsize=1, add.args=list()){
     # phi: Target DIL rate
     # p.true: True DIL rates under the different dose levels
@@ -217,7 +217,7 @@ ORM.simu.fn <- function(phi, p.true, ncohort=12,
     # alp.prior, bet.prior: prior parameters
     earlystop <- 0
     ndose <- length(p.true)
-    cidx <- ceiling(ndose/2)
+    cidx <- init.level
     
     tys <- rep(0, ndose) # number of responses for different doses.
     tns <- rep(0, ndose) # number of subject for different doses.
