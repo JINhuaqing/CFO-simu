@@ -23,8 +23,11 @@ add.args4 <- list(alp.prior=target, bet.prior=1-target, p.prior=p.prior, m=Inf)
 
 run.fn <- function(k){
     print(k)
-    p.true <- c(0.25, 0.35, 0.5, 0.6, 0.7, 0.8)
-    tmtd <- 1
+    # p.true <- c(0.01, 0.02, 0.03, 0.04, 0.05, 0.25) # Scenario 4
+    # p.true <- c(0.05, 0.1, 0.25, 0.32, 0.5, 0.6) # Scenario 3
+    p.true <- c(0.1, 0.25, 0.4, 0.6, 0.7, 0.8) # Scenario 2
+    # p.true <- c(0.25, 0.35, 0.5, 0.6, 0.7, 0.8) # Scenario 1
+    tmtd <- 2
 
     bms1.res <- BMS.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, 
                             init.level=init.level, add.args=add.args1)
@@ -39,7 +42,7 @@ run.fn <- function(k){
     crm.res <- crm.simu.fn(target=target, p.true=p.true, p.prior=p.prior, 
                           init.level=init.level, cohortsize=cohortsize, ncohort=ncohort)
     boin.res <- boin.simu.fn(target=target, p.true=p.true, ncohort=ncohort, 
-                            init.level=init.level, cohortsize=corhortsize)
+                            init.level=init.level, cohortsize=cohortsize)
 
     ress <- list(
                  orm=orm.res,
@@ -55,15 +58,14 @@ run.fn <- function(k){
                          add.args=add.args,
                          target=target,
                          ncohort=ncohort,
-                         cohortsize=cohortsize,
-                         m=m)
+                         cohortsize=cohortsize)
                  )
     ress
 }
 
 
 nsimu <- 10000
-file.name <- paste0("../results/", "Fix_simu", nsimu, "Level_6_fixed1_corhortsize3",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=15)
+file.name <- paste0("../results/", "Fix_simu", nsimu, "Level_6_fixed2_corhortsize3",  ".RData")
+results <- mclapply(1:nsimu, run.fn, mc.cores=20)
 post.process.random(results)
 save(results, file=file.name)
