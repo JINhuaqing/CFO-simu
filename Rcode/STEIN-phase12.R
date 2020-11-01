@@ -207,8 +207,8 @@ psi<-log((1-psi1)/(1-psi2))/log(psi2*(1-psi1)/psi1/(1-psi2))
 
 
 
-target = 0.2 # target toxicity rate
-cohortsize = 1 # cohort size
+target = 0.25 # target toxicity rate
+cohortsize = 3 # cohort size
 ncohort = 12 # number of cohorts
 psi1<-0.35 # lowest acceptable efficacy rate
 psi2<-0.65 # very promising efficacy rate that leads to dose retainment
@@ -226,8 +226,8 @@ pE.true1<-c(0.4, 0.5, 0.6)
 pE.true2<-c(0.4, 0.5, 0.4)
 pE.true3<-c(0.6, 0.5, 0.4)
 
-res <- get.oc(target, pE.true3, 
-              pT.true5, psi1,psi2, ncohort, cohortsize, startdose=2, cutoff.eli=0.95, ntrial=1000)
+res <- get.oc(phi, pE.true, 
+              p.true, psi1, psi2, ncohort, cohortsize, startdose=1, cutoff.eli=0.95, ntrial=1000)
 res$sel %>% round(1)
 res$pts %>% round(1)
 sum(res$pts) %>% round(1)

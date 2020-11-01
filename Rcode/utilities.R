@@ -4,6 +4,34 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 
+phase12.post.fn <- function(ress){
+    numTrials <- length(ress)
+    ndose <- length(ress[[1]]$dose.ns)
+    
+    Allo <- rep(0, ndose)
+    Sel <- rep(0, ndose)
+    effs.cts <- rep(0, ndose)
+    toxs.cts <- rep(0, ndose)
+    tol.Subjs <- 0
+    nonErrStops <- 0
+    for (res in ress){
+        if (res$OBD != 99){
+            nonErrStops <- nonErrStops + 1
+            Sel[res$OBD] <- 1 + Sel[res$OBD]
+        }
+        Allo <- Allo + res$dose.ns
+        effs.cts <- res$eff.ns + effs.cts
+        toxs.cts <- res$DLT.ns + toxs.cts
+        tol.Subjs <- tol.Subjs + sum(res$dose.ns)
+    }
+    
+    sum.v <- list(Allocation=Allo, Selection=Sel,
+                  effs.nums=effs.cts, toxs.nums=toxs.cts,
+                  tol.Subjs=tol.Subjs, errStop=numTrials-nonErrStops,
+                  tol.effs=sum(effs.cts), tol.toxs=sum(toxs.cts))
+    lapply(sum.v, function(i)i/numTrials)
+}
+
 # return latex scr code for output
 latex.out.fn <- function(res, prefix, tidx, suffix=NULL){
   MTDs <- res$MTDs.percent  
