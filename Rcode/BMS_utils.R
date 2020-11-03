@@ -7,6 +7,7 @@ make.move.fn <- function(ps, m=10){
     # m: number of samples to draw for majority vote
     # output: 
     #    action: D--1, S--2, E--3
+    nlevel <- length(ps)
     cps <- cumsum(ps)
     rvs <- runif(m)
     locs <- sapply(rvs, function(rv)rv<= cps)
@@ -14,7 +15,7 @@ make.move.fn <- function(ps, m=10){
     if (m==1){
         final.action <- actions
     }else{
-        res <- sapply(1:3, function(i)actions==i)
+        res <- sapply(1:nlevel, function(i)actions==i)
         res <- colSums(res)
         final.action <- which.max(res)
     }
