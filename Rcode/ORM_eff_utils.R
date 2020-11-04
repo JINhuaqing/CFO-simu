@@ -1,8 +1,4 @@
-rm(list=ls())
-# setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/Rcode")
 source("ORM_utils.R")
-source("utilities.R")
-library(magrittr)
 
 make.move.fn <- function(ps, m=10){
     # ps: Output from move.dose.probs.fn 
@@ -49,7 +45,7 @@ ORM.Eff.move.probs <- function(ad.xs, ad.ns, alp.prior, bet.prior){
     bets <- ad.ns - ad.xs + bet.prior
     nd <- length(ad.xs)
     
-    Nsps <- 100000
+    Nsps <- 10000
     sps.list <- list() 
     for (i in 1:nd){
         sps.list[[i]] <- rbeta(Nsps, alps[i], bets[i])
@@ -63,7 +59,8 @@ ORM.Eff.move.probs <- function(ad.xs, ad.ns, alp.prior, bet.prior){
 }
 
 # Simulation function for ORM-phase I/II
-ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1,  cohortsize=3, add.args=list()){
+ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1,  cohortsize=3, add.args=list(),
+                            ph1=0){
     # phi: Target DIL rate
     # phiE: The minimal efficacy rate, only used for early stop
     # p.true: True DIL rates under the different dose levels
@@ -134,29 +131,39 @@ ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1
         
         # The up.idx of the admissible set
         up.idx <- make.decision.ORM.fn(phi, cys, cns, add.args$alp.prior, add.args$bet.prior, cover.doses) - 2 + cidx
-        if (up.idx == 1){
-            cidx <- 1
+        if (i<=ph1){
+            cidx <- up.idx
         }else{
-            if (cidx == 1){
-                low.idx <- 1
-            }else{
-                low.idx <- cidx - 1
-            }
-            ad.xs <- txs[low.idx:up.idx]
-            ad.ns <- tns[low.idx:up.idx]
-            probs <- ORM.Eff.move.probs(ad.xs, ad.ns, add.args$alp.prior.eff, add.args$bet.prior.eff)
-            #cidx <- which.max(probs)
-            cidx <- make.move.fn(probs, m=10)
             
+            if (up.idx == 1){
+                cidx <- 1
+            }else{
+                if (cidx == 1){
+                    low.idx <- 1
+                }else{
+                    low.idx <- cidx - 1
+                }
+                ad.xs <- txs[low.idx:up.idx]
+                ad.ns <- tns[low.idx:up.idx]
+                if (length(ad.xs)==1){
+                    cidx <- low.idx 
+                }else{
+                    probs <- ORM.Eff.move.probs(ad.xs, ad.ns, add.args$alp.prior.eff, add.args$bet.prior.eff)
+                    cidx <- which.max(probs) + low.idx -1
+                    #cidx <- make.move.fn(probs, m=1) + low.idx - 1
+                }
+                
+            }
         }
         
     }
     
     
     if (earlystop==0){
-        MTD <- select.mtd(phi, tns, tys)$MTD
-        OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
-        OBD <- which.max(OBD.probs)
+        #MTD <- select.mtd(phi, tns, tys)$MTD
+        #OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
+        #OBD <- which.max(OBD.probs)
+        OBD <- util.fn(phi, txs, tys, tns, tover.doses)
         
     }else{
         OBD <- 99
@@ -166,29 +173,41 @@ ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1
          p.true=p.true, target=phi, over.doses=tover.doses, under.eff=tunder.effs)
     
 }
-    
-    
-    
-phi <- 0.3
-phiE <- 0.4
-#p.true <- c(0.25, 0.35, 0.4, 0.45, 0.5)
-#pE.true <- c(0.3, 0.35, 0.45, 0.65, 0.75)
-#p.true <- c(0.1, 0.12, 0.15, 0.2, 0.25)
-#pE.true <- c(0.25, 0.35, 0.6, 0.6, 0.6)
-#p.true <- c(0.05, 0.1, 0.25, 0.3, 0.5)
-#pE.true <- c(0.2, 0.4, 0.6, 0.70, 0.55)
-p.true <- c(0.05, 0.07, 0.1, 0.15, 0.35)
-pE.true <- c(0.1, 0.2, 0.35, 0.5, 0.55)
 
-add.args <- list(alp.prior=phi, bet.prior=1-phi, alp.prior.eff=0.5, bet.prior.eff=1-0.5)
-
-
-ress <- list()
-for (i in 1:100){
-    print(i)
-    res <- ORM.Eff.simu.fn(phi, phiE, p.true=p.true, pE.true=pE.true, add.args=add.args, ncohort=12);res
-    ress[[i]] <- res
+peestimate<-function(yE,n){
+    ndose<-length(yE)
+    lik<-rep(0,ndose)
+    pe<-(yE+0.05)/(n+0.1)
+    p.e<-matrix(NA,ndose,ndose)
+    for (i in 1:ndose){
+        if (i==1) {
+            x<-seq(ndose,1,by=-1)
+        } else {
+            x<-c(1:(i-1),seq(ndose,i))
+        }
+        #x<-x
+        p.e[i,]<-ufit(pe,lmode=i,x=x,w=n+0.5)[[2]]
+        lik[i]<-prod(dbinom(yE,n,p.e[i,]))		
+    }
+    lik<-lik/sum(lik)
+    pe<-t(p.e)%*%lik+0.01*seq(1,ndose)
+    return(pe)
 }
 
+util.fn <- function(phi, xs, ys, ns, Telimi){
+    pT<-(ys+0.05)/(ns+0.1)
+    pE<-(xs+0.05)/(ns+0.1)
+    pT<-pava(pT,ns+0.1)+0.001*seq(1,ndose)
+    pE<-peestimate(xs,ns)
+    
+    pT[ns==0]<-20
+    pT[Telimi==1]<-20
+    pE[ns==0]<-0
+    u<-pE-0.33*pT-1.09*(pT>phi) 	
+    d_opt<-which.max(u)	
+    d_opt
+}
 
-phase12.post.fn(ress)
+    
+    
+
