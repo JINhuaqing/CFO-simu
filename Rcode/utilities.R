@@ -25,7 +25,7 @@ phase12.post.fn <- function(ress){
         tol.Subjs <- tol.Subjs + sum(res$dose.ns)
     }
     
-    sum.v <- list(Allocation=Allo, Selection=Sel,
+    sum.v <- list(Allocation=Allo, Selection=Sel*100,
                   effs.nums=effs.cts, toxs.nums=toxs.cts,
                   tol.Subjs=tol.Subjs, errStop=numTrials-nonErrStops,
                   tol.effs=sum(effs.cts), tol.toxs=sum(toxs.cts))

@@ -160,10 +160,17 @@ ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1
     
     
     if (earlystop==0){
-        #MTD <- select.mtd(phi, tns, tys)$MTD
-        #OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
-        #OBD <- which.max(OBD.probs)
-        OBD <- util.fn(phi, txs, tys, tns, tover.doses)
+        #pT<-(tys+0.05)/(tns+0.1)
+        #pT<-pava(pT, tns+0.1) +0.001*seq(1,ndose)
+        #pT[tover.doses==1] <- 100
+        #diff <- phi - pT
+        #diff[diff<0] <- 100
+        #MTD <- which.min(abs(diff))
+        #print(c(pT, MTD))
+        MTD <- select.mtd(phi, tns, tys)$MTD
+        OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
+        OBD <- which.max(OBD.probs)
+        #OBD <- util.fn(phi, txs, tys, tns, tover.doses, tunder.effs)
         
     }else{
         OBD <- 99
@@ -174,7 +181,7 @@ ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1
     
 }
 
-peestimate<-function(yE,n){
+peestimate<-function(yE, n){
     ndose<-length(yE)
     lik<-rep(0,ndose)
     pe<-(yE+0.05)/(n+0.1)
@@ -190,19 +197,22 @@ peestimate<-function(yE,n){
         lik[i]<-prod(dbinom(yE,n,p.e[i,]))		
     }
     lik<-lik/sum(lik)
-    pe<-t(p.e)%*%lik+0.01*seq(1,ndose)
+    pe<-t(p.e)%*%lik +0.01*seq(1,ndose)
     return(pe)
 }
 
-util.fn <- function(phi, xs, ys, ns, Telimi){
+util.fn <- function(phi, xs, ys, ns, Telimi, Eelimi){
+    ndose <- length(xs)
     pT<-(ys+0.05)/(ns+0.1)
     pE<-(xs+0.05)/(ns+0.1)
-    pT<-pava(pT,ns+0.1)+0.001*seq(1,ndose)
+    pT<-pava(pT,ns+0.1)  +0.001*seq(1,ndose)
     pE<-peestimate(xs,ns)
     
     pT[ns==0]<-20
     pT[Telimi==1]<-20
     pE[ns==0]<-0
+    #pE[Eelimi==1]<-0
+    #pE[Telimi==1]<-0
     u<-pE-0.33*pT-1.09*(pT>phi) 	
     d_opt<-which.max(u)	
     d_opt
