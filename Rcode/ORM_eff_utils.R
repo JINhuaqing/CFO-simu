@@ -325,14 +325,13 @@ ORM.Eff.simu.fn.alter <- function(phi, phiE, p.true, pE.true, ncohort=10, init.l
     
     
     if (earlystop==0){
-        pT<-(tys+0.05)/(tns+0.1)
-        pT<-pava(pT, tns+0.1) +0.001*seq(1,ndose)
-        pT[tover.doses==1] <- 100
-        diff <- phi - pT
-        diff[diff<0] <- 100
-        MTD <- which.min(abs(diff))
-        #print(c(pT, MTD))
-        #MTD <- select.mtd(phi, tns, tys)$MTD
+        #pT<-(tys+0.05)/(tns+0.1)
+        #pT<-pava(pT, tns+0.1) +0.001*seq(1,ndose)
+        #pT[tover.doses==1] <- 100
+        #diff <- phi - pT
+        #diff[diff<0] <- 100
+        #MTD <- which.min(abs(diff))
+        MTD <- select.mtd(phi, tns, tys)$MTD
         OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
         OBD <- which.max(OBD.probs)
         #OBD <- util.fn(phi, txs, tys, tns, tover.doses, tunder.effs)
