@@ -1,4 +1,4 @@
-source("ORM_utils.R")
+source("../ORM_utils.R")
 
 make.move.fn <- function(ps, m=10){
     # ps: Output from move.dose.probs.fn 
