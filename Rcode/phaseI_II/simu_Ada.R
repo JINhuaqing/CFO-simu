@@ -1,29 +1,8 @@
 #setwd("C:/Users/Phase I/")
 
-rm(list = ls(all = TRUE))
 library(MCMCpack)
 library(cubature)
 library(e1071)
-
-#true toxicity/efficacy probability
-tprob1=c(0.02, 0.03, 0.05, 0.06, 0.07, 0.08)
-eprob1=c(0.40, 0.25, 0.20, 0.15, 0.10, 0.05)
-
-eprob2=c(0.25, 0.46, 0.30, 0.25, 0.16, 0.10)
-tprob2=c(0.03, 0.10, 0.15, 0.20, 0.28, 0.35)
-
-eprob3=c(0.10, 0.15, 0.35, 0.18, 0.12, 0.07)
-tprob3=c(0.01, 0.02, 0.03, 0.04, 0.05, 0.06)
-
-eprob4=c(0.05, 0.15, 0.30, 0.45, 0.35, 0.30)
-tprob4=c(0.02, 0.04, 0.06, 0.10, 0.18, 0.40)
-
-eprob5=c(0.15, 0.25, 0.33, 0.47, 0.60, 0.40)
-tprob5=c(0.01, 0.02, 0.03, 0.05, 0.06, 0.07)
-
-
-eprob6=c(0.05, 0.15, 0.30, 0.35, 0.40, 0.50)
-tprob6=c(0.02, 0.05, 0.15, 0.20, 0.25, 0.40)
 
 
 #default skeleton prob
@@ -35,8 +14,8 @@ prob2=c(0.33, 0.40, 0.33, 0.26, 0.19, 0.12)
 prob1=c(0.40, 0.33, 0.26, 0.19, 0.12, 0.05)
 
 
-response.tox=tprob1
-response.eff=eprob1
+response.tox=p.true
+response.eff=pE.true
 
 
 mu_para_1=0;
@@ -45,8 +24,8 @@ tau_para_1=0.1;
 tau_para_2=0.1;
 
 
-csize=3; #cohort size
-ncycle=10; #simulation times
+csize=cohortsize; #cohort size
+ncycle=nsimu; #simulation times
 total.s1=24; # sample size in stage 1
 total.ss=60; # sample size in both stage 2
 SKL=rep(0,length(response.eff));
@@ -65,7 +44,7 @@ mtd.Deci=rep(0,2)
 theta_U=0.7;
 theta_L=0.4;
 theta_T=0.95;
-phi_T=0.3;
+phi_T=phi;
 
 ## pava is the pool-adjacent-violator algorithm to perform isotonic transformation for the posterior means
 pava <- function (x, wt = rep(1, length(x))) {
@@ -488,7 +467,7 @@ tol.toxs <- sum(toxs.nums)
 tol.Subjs <- sum(Allocation)
 errStop <- 1 - sum(OBD)/ncycle
 
-Results <- list(
+sum.res.ada <- list(
   Selection=Selection, 
   Allocation=Allocation,
   effs.nums=effs.nums, 
@@ -498,7 +477,7 @@ Results <- list(
   tol.Subjs=tol.Subjs,
   errStop=errStop)
 
-i <- 1
-fname <- paste0("AdaModel", i, ".RData")
-save(Results, file=fname)
-load("test.RData")
+#i <- 1
+#fname <- paste0("AdaModel", i, ".RData")
+#save(Results, file=fname)
+#load("test.RData")

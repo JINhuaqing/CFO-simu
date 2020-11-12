@@ -1,4 +1,4 @@
-source("../ORM_utils.R")
+source("ORM_utils.R")
 
 make.move.fn <- function(ps, m=10){
     # ps: Output from move.dose.probs.fn 
@@ -29,7 +29,7 @@ under.eff.fn <- function(phiE, add.args=list())
     alp.prior <- add.args$alp.prior.eff
     bet.prior <- add.args$bet.prior.eff
     ppE <- 1 - post.prob.fn(phiE, x, n, alp.prior, bet.prior)
-    if ((ppE >= 0.95) & (n>3)){
+    if ((ppE >= 0.9) & (n>=3)){
         return(TRUE)
     }else{
         return(FALSE)
