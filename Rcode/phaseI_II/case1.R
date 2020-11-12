@@ -50,7 +50,11 @@ sum.res.stein <- get.oc(phi, pE.true, p.true, psi1, psi2,
               ncohort, cohortsize, startdose=1, cutoff.eli=0.95, ntrial=nsimu)
 
 sum.res.orm <- phase12.post.fn(ress1)
+sum.res.orm$p.true <- p.true
+sum.res.orm$pE.true <- pE.true
 sum.res.orm.alter <- phase12.post.fn(ress2)
+sum.res.orm.alter$p.true <- p.true
+sum.res.orm.alter$pE.true <- pE.true
 source("phaseI_II/simu_Ada.R")
 
 sum.all <- list(

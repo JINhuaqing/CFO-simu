@@ -212,6 +212,8 @@ get.oc <- function(target, pE.true, pT.true,  psi1,  psi2, ncohort, cohortsize, 
                      tox.nums=dlt,
                      effs.nums=eff,
                      tol.toxs=ntox,
+                     tol.Subjs=sum(pts),
+                     errStop=100-sum(sel),
                      tol.effs=neff)
 	return(results)	
 }

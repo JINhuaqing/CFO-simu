@@ -27,7 +27,7 @@ phase12.post.fn <- function(ress){
     
     sum.v <- list(Allocation=Allo, Selection=Sel*100,
                   effs.nums=effs.cts, toxs.nums=toxs.cts,
-                  tol.Subjs=tol.Subjs, errStop=numTrials-nonErrStops,
+                  tol.Subjs=tol.Subjs, errStop=100*(numTrials-nonErrStops),
                   tol.effs=sum(effs.cts), tol.toxs=sum(toxs.cts))
     lapply(sum.v, function(i)i/numTrials)
 }
