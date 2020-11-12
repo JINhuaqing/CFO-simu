@@ -11,7 +11,7 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsimu <- 100
+nsimu <- 1000
 
 # plateau
 plateaus <- list()
@@ -60,8 +60,8 @@ sum.all <- list(
                 ada=sum.res.ada
                 )
 
-fName <- paste0("plateau_", idx, ".RData")
-#save(sum.all, file="./results4.RData")
+fName <- paste0("res_plateau_", idx, ".RData")
+save(sum.all, file=fName)
 
 sum.fn <- function(ress){
     nams <- names(ress)

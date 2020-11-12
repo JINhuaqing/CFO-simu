@@ -1,5 +1,5 @@
 source("utilities.R")
-load("results4.RData")
+load("res_plateau_1.RData")
 
 sum.fn <- function(ress){
     nams <- names(ress)
@@ -15,4 +15,4 @@ sum.fn <- function(ress){
 }
 
 
-sum.fn(results)
+sum.fn(sum.all)
