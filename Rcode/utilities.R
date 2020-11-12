@@ -4,6 +4,33 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 
+phase.I.II.pretty.tb <- function(sum.all){
+    ndose <- length(sum.all[[1]]$p.true)
+    tb <- NULL
+    tox.nums <- c()
+    eff.nums <- c()
+    errStops <- c()
+    sub.nums <- c()
+    for (res in sum.all){
+        rw <- paste0(round(res$Selection, 1), "(", round(res$Allocation, 1), ")")
+        tb <- rbind(tb, rw)
+        tox.nums <- c(tox.nums, res$tol.toxs)
+        eff.nums <- c(eff.nums, res$tol.effs)
+        sub.nums <- c(sub.nums, sum(res$Allocation))
+        errStops <- c(errStops, 100-sum(res$Selection))
+    }
+    
+    tb.df <- as.data.frame(tb)
+    rownames(tb.df) <- names(sum.all)
+    names(tb.df) <- paste0("Level ", 1:ndose)
+    
+    tb.df["nTox"] <- round(tox.nums, 1)
+    tb.df["nEff"] <- round(eff.nums, 1)
+    tb.df["nSub"] <- round(sub.nums, 1)
+    tb.df["errStop.Rate"] <- round(errStops, 1)
+    tb.df
+}
+
 phase12.post.fn <- function(ress){
     numTrials <- length(ress)
     ndose <- length(ress[[1]]$dose.ns)
