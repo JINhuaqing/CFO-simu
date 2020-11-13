@@ -32,7 +32,14 @@ umbrellas[[5]] <- list(p.true=c(0.05, 0.2, 0.25, 0.3, 0.4),
                       pE.true=c(0.2, 0.6, 0.55, 0.35, 0.2))
 umbrellas[[6]] <- list(p.true=c(0.05, 0.22, 0.25, 0.3, 0.4),
                       pE.true=c(0.2, 0.6, 0.55, 0.35, 0.2))
-idx <- 6
+umbrellas[[7]] <- list(p.true=c(0.10, 0.22, 0.25, 0.3, 0.4),
+                      pE.true=c(0.3, 0.6, 0.55, 0.35, 0.2))
+umbrellas[[8]] <- list(p.true=c(0.05, 0.1, 0.15, 0.2, 0.3),
+                      pE.true=c(0.2, 0.3, 0.7, 0.55, 0.2))
+umbrellas[[8]] <- list(p.true=c(0.05, 0.1, 0.15, 0.2, 0.3),
+                      pE.true=c(0.2, 0.6, 0.7, 0.55, 0.2))
+# 7 is good
+idx <- 8
 p.true <- umbrellas[[idx]]$p.true
 pE.true <- umbrellas[[idx]]$pE.true
 

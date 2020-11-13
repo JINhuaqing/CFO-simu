@@ -109,6 +109,8 @@ ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1
         
         if (under.eff.fn(phiE, add.args)){
             tunder.effs[cidx] <- 1
+        }else{
+            tunder.effs[cidx] <- 0
         }
         
         
@@ -275,6 +277,8 @@ ORM.Eff.simu.fn.alter <- function(phi, phiE, p.true, pE.true, ncohort=10, init.l
         
         if (under.eff.fn(phiE, add.args)){
             tunder.effs[cidx] <- 1
+        }else{
+            tunder.effs[cidx] <- 0
         }
         
         
