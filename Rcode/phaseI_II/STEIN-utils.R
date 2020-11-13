@@ -125,7 +125,7 @@ get.oc <- function(target, pE.true, pT.true,  psi1,  psi2, ncohort, cohortsize, 
 				}
 				
 			}
-			if(n[d]>=3 && pbeta(psi1,yE[d]+1,n[d]-yE[d]+1)>0.9) {
+			if(n[d]>=3 && pbeta(psi1,yE[d]+1,n[d]-yE[d]+1)>0.98) {
 			    elimiE[d]=1;
 			}
 			

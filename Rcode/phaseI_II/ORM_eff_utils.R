@@ -168,8 +168,12 @@ ORM.Eff.simu.fn <- function(phi, phiE, p.true, pE.true, ncohort=10, init.level=1
         #MTD <- which.min(abs(diff))
         #print(c(pT, MTD))
         MTD <- select.mtd(phi, tns, tys)$MTD
-        OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
-        OBD <- which.max(OBD.probs)
+        if (sum(tunder.effs[1:MTD]) == MTD){
+            OBD <- 99
+        }else{
+            OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
+            OBD <- which.max(OBD.probs)
+        }
         #OBD <- util.fn(phi, txs, tys, tns, tover.doses, tunder.effs)
         
     }else{
@@ -332,8 +336,12 @@ ORM.Eff.simu.fn.alter <- function(phi, phiE, p.true, pE.true, ncohort=10, init.l
         #diff[diff<0] <- 100
         #MTD <- which.min(abs(diff))
         MTD <- select.mtd(phi, tns, tys)$MTD
-        OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
-        OBD <- which.max(OBD.probs)
+        if (sum(tunder.effs[1:MTD]) == MTD){
+            OBD <- 99
+        }else{
+            OBD.probs <- ORM.Eff.move.probs(txs[1:MTD], tns[1:MTD], add.args$alp.prior.eff, add.args$bet.prior.eff)
+            OBD <- which.max(OBD.probs)
+        }
         #OBD <- util.fn(phi, txs, tys, tns, tover.doses, tunder.effs)
         
     }else{

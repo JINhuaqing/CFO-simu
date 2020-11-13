@@ -4,7 +4,24 @@ library(ggplot2)
 library(gridExtra)
 library(grid)
 
+OBD.level <- function(phi, phiE, p.true, pE.true){
+    if (p.true[1]>phi+0.1){
+        OBD <- 99
+        return(OBD)
+    }
+    MTD <- which.min(abs(phi - p.true))
+    eff.idxs <- phiE > pE.true[1:MTD]
+    if (sum(eff.idxs)==MTD){
+        OBD <- 99
+        return(OBD)
+    }
+
+    OBD <- which.max(pE.true[1:MTD])
+    return(OBD)
+}
+
 phase.I.II.pretty.tb <- function(sum.all){
+    # The errStops in fact is the none selection rate
     ndose <- length(sum.all[[1]]$p.true)
     tb <- NULL
     tox.nums <- c()
@@ -27,7 +44,7 @@ phase.I.II.pretty.tb <- function(sum.all){
     tb.df["nTox"] <- round(tox.nums, 1)
     tb.df["nEff"] <- round(eff.nums, 1)
     tb.df["nSub"] <- round(sub.nums, 1)
-    tb.df["errStop.Rate"] <- round(errStops, 1)
+    tb.df["NonSel.rate"] <- round(errStops, 1)
     tb.df
 }
 
