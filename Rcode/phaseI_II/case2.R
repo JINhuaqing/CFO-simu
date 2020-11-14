@@ -35,11 +35,12 @@ idx <- 9
 p.true <- umbrellas[[idx]]$p.true
 pE.true <- umbrellas[[idx]]$pE.true
 
+source("phaseI_II/simu_efftox.R")
+fName <- paste0("../results/efftox_res_umbrella_", idx, ".RData")
+save(sum.res.efftox, file=fName)
 
 #source("phaseI_II/simu_orm.R")
-source("phaseI_II/simu_efftox.R")
 #source("phaseI_II/simu_Ada.R")
-
 #sum.all <- list(
 #                stein=sum.res.stein,
 #                orm=sum.res.orm,
@@ -49,9 +50,9 @@ source("phaseI_II/simu_efftox.R")
 #                )
 
 #fName <- paste0("../results/res_umbrella_", idx, ".RData")
-fName <- paste0("../results/efftox_res_umbrella_", idx, ".RData")
-save(sum.res.efftox, file=fName)
-
+#save(sum.all, file=fName)
 #print(OBD.level(phi, phiE, p.true, pE.true))
 #phase.I.II.pretty.tb(sum.all)
+
+
 

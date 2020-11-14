@@ -28,11 +28,13 @@ p.true <- plateaus[[idx]]$p.true
 pE.true <- plateaus[[idx]]$pE.true
 
 
+source("phaseI_II/simu_efftox.R")
+fName <- paste0("../results/efftox_res_plateau_", idx, ".RData")
+save(sum.res.efftox, file=fName)
+
 
 #source("phaseI_II/simu_orm.R")
-source("phaseI_II/simu_efftox.R")
 #source("phaseI_II/simu_Ada.R")
-
 #sum.all <- list(
 #                stein=sum.res.stein,
 #                orm=sum.res.orm,
@@ -42,9 +44,8 @@ source("phaseI_II/simu_efftox.R")
 #                )
 
 #fName <- paste0("../results/res_plateau_", idx, ".RData")
-fName <- paste0("../results/efftox_res_plateau_", idx, ".RData")
-save(sum.res.efftox, file=fName)
-
+#save(sum.all, file=fName)
 #print(OBD.level(phi, phiE, p.true, pE.true))
 #phase.I.II.pretty.tb(sum.all)
+
 
