@@ -1,22 +1,14 @@
-#rm(list=ls())
-#setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/Rcode")
-#set.seed(0);
 setwd("../")
-source("phaseI_II/ORM_eff_utils.R")
-source("phaseI_II/STEIN-utils.R")
 source("utilities.R")
 library(parallel)
 
-#fName <- paste0("res_plateau_", 4, ".RData")
-#load(fName)
-#
-#phase.I.II.pretty.tb(sum.all)
 
 phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
 nsimu <- 1000
+ncore <- 8
 
 # plateau
 plateaus <- list()
@@ -31,51 +23,28 @@ plateaus[[4]] <- list(p.true=c(0.15, 0.25, 0.3, 0.35, 0.4),
 plateaus[[5]] <- list(p.true=c(0.15, 0.2, 0.3, 0.35, 0.4),
                       pE.true=c(0.2, 0.5, 0.5, 0.5, 0.5))
 # 2, 3, 4 are good
-idx <- 5
+idx <- 2
 p.true <- plateaus[[idx]]$p.true
 pE.true <- plateaus[[idx]]$pE.true
 
 
-psi1<-0.3 # lowest acceptable efficacy rate
-psi2<-0.65 # very promising efficacy rate that leads to dose retainment
 
-add.args <- list(alp.prior=phi, bet.prior=1-phi, alp.prior.eff=0.5, bet.prior.eff=1-0.5)
+#source("phaseI_II/simu_orm.R")
+source("phaseI_II/simu_efftox.R")
+#source("phaseI_II/simu_Ada.R")
 
-run.fn1 <- function(k){
-    print(k)
-    res <- ORM.Eff.simu.fn(phi, phiE, p.true=p.true, pE.true=pE.true, add.args=add.args, cohortsize=cohortsize, ncohort=ncohort, ph1=0)
-    res
-}
+#sum.all <- list(
+#                stein=sum.res.stein,
+#                orm=sum.res.orm,
+#                orm.alter=sum.res.orm.alter,
+#                efftox=sum.res.efftox,
+#                ada=sum.res.ada
+#                )
 
-run.fn2 <- function(k){
-    print(k)
-    res <- ORM.Eff.simu.fn.alter(phi, phiE, p.true=p.true, pE.true=pE.true, add.args=add.args, cohortsize=cohortsize, ncohort=ncohort, ph1=0)
-    res
-}
+#fName <- paste0("../results/res_plateau_", idx, ".RData")
+fName <- paste0("../results/efftox_res_plateau_", idx, ".RData")
+save(sum.res.efftox, file=fName)
 
-ress1 <- mclapply(1:nsimu, run.fn1, mc.cores=5)
-ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=5)
-
-sum.res.stein <- get.oc(phi, pE.true, p.true, psi1, psi2, 
-              ncohort, cohortsize, startdose=1, cutoff.eli=0.95, ntrial=nsimu)
-
-sum.res.orm <- phase12.post.fn(ress1)
-sum.res.orm$p.true <- p.true
-sum.res.orm$pE.true <- pE.true
-sum.res.orm.alter <- phase12.post.fn(ress2)
-sum.res.orm.alter$p.true <- p.true
-sum.res.orm.alter$pE.true <- pE.true
-source("phaseI_II/simu_Ada.R")
-
-sum.all <- list(
-                stein=sum.res.stein,
-                orm=sum.res.orm,
-                orm.alter=sum.res.orm.alter,
-                ada=sum.res.ada
-                )
-
-fName <- paste0("res_plateau_", idx, ".RData")
-save(sum.all, file=fName)
-
-phase.I.II.pretty.tb(sum.all)
+#print(OBD.level(phi, phiE, p.true, pE.true))
+#phase.I.II.pretty.tb(sum.all)
 

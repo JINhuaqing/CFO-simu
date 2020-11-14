@@ -468,6 +468,8 @@ tol.Subjs <- sum(Allocation)
 errStop <- 1 - sum(OBD)/ncycle
 
 sum.res.ada <- list(
+  p.true=p.true,
+  pE.true=pE.true,
   Selection=Selection, 
   Allocation=Allocation,
   effs.nums=effs.nums, 
@@ -477,7 +479,3 @@ sum.res.ada <- list(
   tol.Subjs=tol.Subjs,
   errStop=errStop)
 
-#i <- 1
-#fname <- paste0("AdaModel", i, ".RData")
-#save(Results, file=fname)
-#load("test.RData")
