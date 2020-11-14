@@ -35,11 +35,11 @@ umbrellas[[6]] <- list(p.true=c(0.05, 0.22, 0.25, 0.3, 0.4),
 umbrellas[[7]] <- list(p.true=c(0.10, 0.22, 0.25, 0.3, 0.4),
                       pE.true=c(0.3, 0.6, 0.55, 0.35, 0.2))
 umbrellas[[8]] <- list(p.true=c(0.05, 0.1, 0.15, 0.2, 0.3),
-                      pE.true=c(0.2, 0.3, 0.7, 0.55, 0.2))
-umbrellas[[8]] <- list(p.true=c(0.05, 0.1, 0.15, 0.2, 0.3),
                       pE.true=c(0.2, 0.6, 0.7, 0.55, 0.2))
-# 7 is good
-idx <- 8
+umbrellas[[9]] <- list(p.true=c(0.05, 0.1, 0.15, 0.2, 0.3),
+                      pE.true=c(0.2, 0.55, 0.7, 0.55, 0.2))
+# 7, 8, 9 is good
+idx <- 9
 p.true <- umbrellas[[idx]]$p.true
 pE.true <- umbrellas[[idx]]$pE.true
 
@@ -61,8 +61,8 @@ run.fn2 <- function(k){
     res
 }
 
-ress1 <- mclapply(1:nsimu, run.fn1, mc.cores=5)
-ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=5)
+ress1 <- mclapply(1:nsimu, run.fn1, mc.cores=8)
+ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=8)
 
 sum.res.stein <- get.oc(phi, pE.true, p.true, psi1, psi2, 
               ncohort, cohortsize, startdose=1, cutoff.eli=0.95, ntrial=nsimu)
