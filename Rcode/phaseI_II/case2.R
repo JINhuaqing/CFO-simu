@@ -16,7 +16,8 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsimu <- 1000
+ncore <- 20
+nsimu <- 20
 
 # umbrella-shape
 umbrellas <- list()
@@ -61,8 +62,8 @@ run.fn2 <- function(k){
     res
 }
 
-ress1 <- mclapply(1:nsimu, run.fn1, mc.cores=8)
-ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=8)
+ress1 <- mclapply(1:nsimu, run.fn1, mc.cores=ncore)
+ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=ncore)
 
 sum.res.stein <- get.oc(phi, pE.true, p.true, psi1, psi2, 
               ncohort, cohortsize, startdose=1, cutoff.eli=0.95, ntrial=nsimu)
@@ -74,15 +75,17 @@ sum.res.orm.alter <- phase12.post.fn(ress2)
 sum.res.orm.alter$p.true <- p.true
 sum.res.orm.alter$pE.true <- pE.true
 source("phaseI_II/simu_Ada.R")
+source("phaseI_II/simu_efftox.R")
 
 sum.all <- list(
                 stein=sum.res.stein,
                 orm=sum.res.orm,
                 orm.alter=sum.res.orm.alter,
+                efftox=sum.res.efftox,
                 ada=sum.res.ada
                 )
 
-fName <- paste0("res_umbrella_", idx, ".RData")
+fName <- paste0("allres_umbrella_", idx, ".RData")
 save(sum.all, file=fName)
 
 print(OBD.level(phi, phiE, p.true, pE.true))

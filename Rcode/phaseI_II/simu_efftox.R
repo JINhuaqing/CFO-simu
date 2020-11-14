@@ -48,7 +48,7 @@ res.efftox <- efftox_simulate(eff.dat,
                               true_eff=pE.true,
                               true_tox=p.true,
                               cohort_sizes=rep(cohortsize, ncohort), 
-                              chains=2, cores=8)
+                              chains=2, cores=ncore)
 
 sum.res.efftox <- res.efftox.fn(res.efftox)
 
