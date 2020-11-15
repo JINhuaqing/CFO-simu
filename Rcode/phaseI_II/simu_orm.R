@@ -23,7 +23,7 @@ run.fn2 <- function(k){
 }
 
 ress1 <- mclapply(1:nsimu, run.fn1, mc.cores=ncore)
-ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=ncore)
+#ress2 <- mclapply(1:nsimu, run.fn2, mc.cores=ncore)
 
 
 sum.res.stein <- get.oc(phi, pE.true, p.true, psi1, psi2, 
@@ -32,9 +32,9 @@ sum.res.stein <- get.oc(phi, pE.true, p.true, psi1, psi2,
 sum.res.orm <- phase12.post.fn(ress1)
 sum.res.orm$p.true <- p.true
 sum.res.orm$pE.true <- pE.true
-sum.res.orm.alter <- phase12.post.fn(ress2)
-sum.res.orm.alter$p.true <- p.true
-sum.res.orm.alter$pE.true <- pE.true
+#sum.res.orm.alter <- phase12.post.fn(ress2)
+#sum.res.orm.alter$p.true <- p.true
+#sum.res.orm.alter$pE.true <- pE.true
 
 
 
