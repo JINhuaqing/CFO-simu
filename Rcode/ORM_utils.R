@@ -194,7 +194,6 @@ make.decision.ORM.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.dose
 }
 
 overdose.fn <- function(phi, add.args=list()){
-    args <- c(list(phi=phi), add.args)
     y <- add.args$y
     n <- add.args$n
     alp.prior <- add.args$alp.prior

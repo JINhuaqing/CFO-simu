@@ -241,7 +241,7 @@ beta0
 
 
 #===============Main program===============
-STOP=0;
+#STOP=0;
 
 for (simu in 1:ncycle) {
     print(simu)
@@ -379,12 +379,12 @@ for (simu in 1:ncycle) {
     mtd.Deci[2]=mtd.Deci[2]+1;
     }#else
     
+        #Dose.npat=Dose.npat+dose.npat;
+        #STOP=STOP+stop1;
+        #Dose.npat1=rbind(Dose.npat1,dose.npat);
+        
+        dose.curr = dose.star
     }
-    #Dose.npat=Dose.npat+dose.npat;
-    STOP=STOP+stop1;
-    Dose.npat1=rbind(Dose.npat1,dose.npat);
-    
-    dose.curr = dose.star
 
     #==============Stage II==============
     while ((sum(dose.npat)<total.ss) & stop1==0){
