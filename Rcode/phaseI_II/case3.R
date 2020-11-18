@@ -33,7 +33,7 @@ source("phaseI_II/simu_orm.R")
 source("phaseI_II/simu_Ada.R")
 sum.all <- list(
                 stein=sum.res.stein,
-                orm=sum.res.orm
+                orm=sum.res.orm,
 #                efftox=sum.res.efftox,
                 ada=sum.res.ada
                 )
