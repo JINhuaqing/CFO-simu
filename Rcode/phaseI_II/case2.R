@@ -7,8 +7,8 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsimu <- 1000
-ncore <- 10
+nsimu <- 5000
+ncore <- 20
 
 # umbrella-shape
 umbrellas <- list()
