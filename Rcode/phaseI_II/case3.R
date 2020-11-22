@@ -7,7 +7,7 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsimu <- 1000
+nsimu <- 5000
 ncore <- 20
 
 # increasing
@@ -21,7 +21,7 @@ increas[[3]] <- list(p.true=c(0.03, 0.22, 0.30, 0.45, 0.55),
 increas[[4]] <- list(p.true=c(0.10, 0.30, 0.35, 0.45, 0.55),
                       pE.true=c(0.25, 0.40, 0.45, 0.6, 0.7))
 # 
-idx <- 4
+idx <- 1
 p.true <- increas[[idx]]$p.true
 pE.true <- increas[[idx]]$pE.true
 
