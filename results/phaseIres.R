@@ -1,4 +1,4 @@
-setwd("../../results/")
+setwd("../results/")
 fil <- dir(pattern="5000fix_4")
 fil
 load(fil)
@@ -16,4 +16,8 @@ sum.all <- list(
                 ORM = phase1.post.fn(orm.ress),
                 CRM = phase1.post.fn(crm.ress)
                 )
-phase.I.pretty.tb(sum.all)
+tb <- phase.I.pretty.tb(sum.all); tb
+tb <- tb[, -7];tb
+
+tb[c(2, 1, 3), ]
+

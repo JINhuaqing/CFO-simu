@@ -36,16 +36,16 @@ scenarios[[5]] <- list(p.true=c(0.05, 0.07, 0.1, 0.12, 0.16),
 
 scenarios[[6]] <- list(p.true=c(0.25, 0.40, 0.5, 0.55, 0.6),
                        pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
-for (i in 1:6){
-    sce <- scenarios[[i]]
-    outstr <- paste0("$(", sce$p.true, ",", " ", sce$pE.true, ")$")
-    outstr <- paste(outstr, collapse = " & ")
-    outstr <- paste0("&", outstr, " \\\\", "\n")
-    cat(outstr)
-}
+# for (i in 1:6){
+#     sce <- scenarios[[i]]
+#     outstr <- paste0("$(", sce$p.true, ",", " ", sce$pE.true, ")$")
+#     outstr <- paste(outstr, collapse = " & ")
+#     outstr <- paste0("&", outstr, " \\\\", "\n")
+#     cat(outstr)
+# }
 
 
-#jpeg("plots/eff_tox_sc6.jpg", width=480*1.2, height=720*1.2, pointsize=15)
+pdf("plots/eff_tox_sc6.pdf", width=6, height=8)
 de.par <- par()
 mat <- matrix(c(1, 2, 3, 4, 5, 6, 7, 7), nrow=4, byrow=TRUE)
 layout(mat=mat, heights=c(0.5, 0.5, 0.5, 0.2))
@@ -58,11 +58,12 @@ phaseI_II.scenario.plot.fn(scenarios[[4]]$p.true, scenarios[[4]]$pE.true, main="
 phaseI_II.scenario.plot.fn(scenarios[[5]]$p.true, scenarios[[5]]$pE.true, main="scenario 5", OBD=5)
 phaseI_II.scenario.plot.fn(scenarios[[6]]$p.true, scenarios[[6]]$pE.true, main="scenario 6", OBD=NULL)
 
-par(mar = c(0,2,0,2))
+par(mar = c(0, 2, 0, 2))
 plot(1, type = "n", axes=FALSE, xlab="", ylab="")
 cols <- c("black", "red")
 lwds <- c(2, 2)
 ltys <- c(1, 2)
 pchs <- c(15, 16)
-legend(x="top", inset=0, legend=c("DLT rate", "Efficacy rate"), col=cols, lty=ltys, lwd=lwds, pch=pchs, horiz=TRUE)
+legend(x="top", inset=0, legend=c("DLT rate", "Efficacy rate"), 
+       col=cols, lty=ltys, lwd=lwds, pch=pchs, horiz=TRUE)
 dev.off()
