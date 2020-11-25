@@ -1,3 +1,4 @@
+setwd("C:/Users/Dell/Documents/ProjectCode/phaseI")
 phi <- 0.3
 
 xs <- seq(0.01, 0.99, length.out=100)
@@ -6,7 +7,9 @@ xs <- seq(0.01, 0.99, length.out=100)
 cols <- rainbow(3)
 ltys <- c(2, 1, 4)
 
+pdf("./plots/odds_L.pdf", width=8, height=4)
 par(mfrow=c(1,2))
+par(mar = c(2, 4, 2, 2))
 alps <- c(3.5, 5, 7)
 bets <- c(7, 5, 3)
 plot(xs, dbeta(xs, alps[1], bets[1]), type="l", lwd=2, lty=ltys[1], 
@@ -28,4 +31,6 @@ axis(1, phi, expression(phi))
 abline(v=phi, lty=3)
 legend.labs <- c(expression(p[L]), expression(p[C]), expression(p[R])) 
 legend("topright", legend.labs, lty=ltys, col=c("black", cols[1:2]))
+
+dev.off()
 

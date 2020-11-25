@@ -7,8 +7,8 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsimu <- 1000
-ncore <- 10
+nsimu <- 5000
+ncore <- 20
 
 # No OBD
 ps <- list()
@@ -23,7 +23,7 @@ ps[[4]] <- list(p.true=c(0.1, 0.15, 0.25, 0.30, 0.45),
 ps[[5]] <- list(p.true=c(0.22, 0.45, 0.55, 0.65, 0.70),
                 pE.true=c(0.03, 0.10, 0.20, 0.35, 0.40))
  
-idx <- 6
+idx <- 2
 p.true <- ps[[idx]]$p.true
 pE.true <- ps[[idx]]$pE.true
 

@@ -13,7 +13,9 @@ posterior <- function(alpha, p, y, d) {
 }
 
 # used to calculate the posterior mean of pi
-posttoxf <- function(alpha, p, y, d, j) { p[j]^(exp(alpha))*posterior(alpha, p, y, d); }
+posttoxf <- function(alpha, p, y, d, j) { 
+    p[j]^(exp(alpha))*posterior(alpha, p, y, d); 
+}
 
 crm.simu.fn <-function(target = 0.30, ## Target toxicity pr
               p.true, p.prior, init.level=1, cohortsize=1, ncohort=12, p.eli = 0.95){
@@ -22,7 +24,8 @@ crm.simu.fn <-function(target = 0.30, ## Target toxicity pr
     
     ndose <- length(p.true)
     if (missing(p.prior)){
-        p.prior <- getprior(0.05, target, ceiling(ndose/2), ndose)
+        p.prior <- getprior(0.12, target, ceiling(ndose/2), ndose)
+        #p.prior <- getprior(0.1, target, 1, ndose)
     }
     pts=rep(0,ndose);
     dlt=rep(0,ndose);

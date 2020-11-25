@@ -20,9 +20,43 @@ OBD.level <- function(phi, phiE, p.true, pE.true){
     return(OBD)
 }
 
+MTD.level <- function(phi, p.true){
+    if (p.true[1]>phi+0.1){
+        MTD <- 99
+        return(MTD)
+    }
+    MTD <- which.min(abs(phi - p.true))
+    return(MTD)
+}
+
+phase.I.pretty.tb <- function(sum.all){
+    # The errStops in fact is the none selection rate
+    ndose <- length(sum.all[[1]]$Selection)
+    tb <- NULL
+    tox.nums <- c()
+    errStops <- c()
+    sub.nums <- c()
+    for (res in sum.all){
+        rw <- paste0(round(res$Selection, 1), "(", round(res$Allocation, 1), ")")
+        tb <- rbind(tb, rw)
+        tox.nums <- c(tox.nums, res$tol.toxs)
+        sub.nums <- c(sub.nums, sum(res$Allocation))
+        errStops <- c(errStops, 100-sum(res$Selection))
+    }
+    
+    tb.df <- as.data.frame(tb)
+    rownames(tb.df) <- names(sum.all)
+    names(tb.df) <- paste0("Level ", 1:ndose)
+    
+    tb.df["nTox"] <- round(tox.nums, 1)
+    tb.df["nSub"] <- round(sub.nums, 1)
+    tb.df["NonSel.rate"] <- round(errStops, 1)
+    tb.df
+}
+
 phase.I.II.pretty.tb <- function(sum.all){
     # The errStops in fact is the none selection rate
-    ndose <- length(sum.all[[1]]$p.true)
+    ndose <- length(sum.all[[1]]$Selection)
     tb <- NULL
     tox.nums <- c()
     eff.nums <- c()
@@ -46,6 +80,32 @@ phase.I.II.pretty.tb <- function(sum.all){
     tb.df["nSub"] <- round(sub.nums, 1)
     tb.df["NonSel.rate"] <- round(errStops, 1)
     tb.df
+}
+
+phase1.post.fn <- function(ress){
+    numTrials <- length(ress)
+    ndose <- length(ress[[1]]$dose.ns)
+    
+    Allo <- rep(0, ndose)
+    Sel <- rep(0, ndose)
+    toxs.cts <- rep(0, ndose)
+    tol.Subjs <- 0
+    nonErrStops <- 0
+    for (res in ress){
+        if (res$MTD != 99){
+            nonErrStops <- nonErrStops + 1
+            Sel[res$MTD] <- 1 + Sel[res$MTD]
+        }
+        Allo <- Allo + res$dose.ns
+        toxs.cts <- res$DLT.ns + toxs.cts
+        tol.Subjs <- tol.Subjs + sum(res$dose.ns)
+    }
+    
+    sum.v <- list(Allocation=Allo, Selection=Sel*100,
+                  toxs.nums=toxs.cts,
+                  tol.Subjs=tol.Subjs, errStop=100*(numTrials-nonErrStops),
+                  tol.toxs=sum(toxs.cts))
+    lapply(sum.v, function(i)i/numTrials)
 }
 
 phase12.post.fn <- function(ress){
