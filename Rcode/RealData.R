@@ -162,16 +162,25 @@ ORM.Eff.simu.fn.realdata <- function(phi, phiE, p.true, pE.true, ncohort=10, ini
 }
 
 phi <- 0.2
-phiE <- 0.20
+phiE <- 0.15
 add.args <- list(alp.prior=phi, bet.prior=1-phi, alp.prior.eff=0.5, bet.prior.eff=1-0.5)
-res <- ORM.Eff.simu.fn.realdata(phi=phi, phiE=0.2, p.true=pT, pE.true=pE, ncohort=19, init.level=1,  
+res <- ORM.Eff.simu.fn.realdata(phi=phi, phiE=phiE, p.true=pT, pE.true=pE, ncohort=19, init.level=1,  
                          cohortsize=3, add.args=add.args, ph1=0)
     
 
 res$OBD
-res$tunder.seq
-res$tover.seq
+df <- cbind(res$dose.seq, c(-1, res$upidx.seq[1:18]), rowSums(res$tox.seq), rowSums(res$eff.seq))
+df <- as.data.frame(df)
+names(df) <- c("dose", "Upidx", "tox", "eff")
+rownames(df) <- paste0("cohort", 1:19)
+df
+
 res$dose.seq
+res$upidx.seq
 res$tox.seq
 res$eff.seq
+res$tunder.seq
+res$tover.seq
 res$ttox.seq
+res$teff.seq
+res$dose.ns
