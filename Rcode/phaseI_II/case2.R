@@ -7,7 +7,7 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsimu <- 5000
+nsimu <- 1000
 ncore <- 20
 
 # umbrella-shape
@@ -36,8 +36,8 @@ umbrellas[[11]] <- list(p.true=c(0.15, 0.25, 0.40, 0.45, 0.50),
                       pE.true=c(0.15, 0.45, 0.30, 0.25, 0.2))
 umbrellas[[12]] <- list(p.true=c(0.05, 0.15, 0.25, 0.40, 0.45),
                       pE.true=c(0.08, 0.17, 0.45, 0.30, 0.25))
-# 
-idx <- 12
+# 7, 12
+idx <- 7
 p.true <- umbrellas[[idx]]$p.true
 pE.true <- umbrellas[[idx]]$pE.true
 
@@ -45,17 +45,17 @@ pE.true <- umbrellas[[idx]]$pE.true
 #fName <- paste0("../results/efftox_res_umbrella_", nsimu, "_", idx, ".RData")
 #save(sum.res.efftox, file=fName)
 
-source("phaseI_II/simu_orm.R")
+#source("phaseI_II/simu_orm.R")
 source("phaseI_II/simu_Ada.R")
 sum.all <- list(
-                stein=sum.res.stein,
-                orm=sum.res.orm,
-#                orm.alter=sum.res.orm.alter,
+#                stein=sum.res.stein,
+#                orm=sum.res.orm,
 #                efftox=sum.res.efftox,
                 ada=sum.res.ada
                 )
 
-fName <- paste0("../results/res_umbrella_", nsimu, "_", idx, ".RData")
+fName <- paste0("../results/ada_res_umbrella_", nsimu, "_", idx, ".RData")
+#fName <- paste0("../results/res_umbrella_", nsimu, "_", idx, ".RData")
 save(sum.all, file=fName)
 print(OBD.level(phi, phiE, p.true, pE.true))
 phase.I.II.pretty.tb(sum.all)

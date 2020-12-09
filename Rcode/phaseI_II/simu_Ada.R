@@ -262,6 +262,9 @@ for (simu in 1:ncycle) {
     while ((sum(dose.npat)<total.s1)&&(stop1==0)){
     
       #dose=c(dose,rep(dose.level[dose.curr], csize));
+      eff.curr=rbinom(csize, 1, response.eff[dose.curr]);
+      dose.eff[dose.curr]=dose.eff[dose.curr]+sum(eff.curr);
+
       tox.curr=rbinom(csize, 1, response.tox[dose.curr]);
       dose.tox[dose.curr]=dose.tox[dose.curr]+sum(tox.curr);
       dose.npat[dose.curr]=dose.npat[dose.curr]+csize;
@@ -390,8 +393,8 @@ for (simu in 1:ncycle) {
     while ((sum(dose.npat)<total.ss) & stop1==0){
       eff.curr=rbinom(csize, 1, response.eff[dose.curr]);
       tox.curr=rbinom(csize, 1, response.tox[dose.curr]);
+
       dose.eff[dose.curr]=dose.eff[dose.curr]+sum(eff.curr);
-      
       dose.tox[dose.curr]=dose.tox[dose.curr]+sum(tox.curr);
       dose.npat[dose.curr]=dose.npat[dose.curr]+csize;
       y = c(y, tox.curr)
