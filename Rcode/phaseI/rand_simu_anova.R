@@ -48,7 +48,7 @@ mus.list[[3]][[3]] <- c(0.25, 0.40, 0.54, 0.72)
 flag <- 0
 for (i1 in 1:length(nlevels)){
     for (i2 in 1:length(csizes)){
-        for (i3 in 4:length(sample.sizes)){
+        for (i3 in 7:length(sample.sizes)){
             for (i4 in 1:length(diff.probs)){
                 for (i5 in 1:length(targets)){
                     flag <- flag + 1
