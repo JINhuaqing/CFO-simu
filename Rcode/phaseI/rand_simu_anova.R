@@ -8,7 +8,7 @@ source("ORM_utils.R")
 
 nlevels <- c(3, 5, 7)
 csizes <- c(1, 3, 6)
-sample.sizes <- c(24, 30, 36)
+sample.sizes <- c(24, 30, 36, 18, 42, 60)
 diff.probs <- c(0.05, 0.07, 0.10, 0.15)
 targets <- c(0.25, 0.3, 0.33)
 
@@ -52,7 +52,7 @@ mus.list[[3]][[3]] <- c(0.25, 0.40, 0.54, 0.72)
 flag <- 0
 for (i1 in 1:length(nlevels)){
     for (i2 in 1:length(csizes)){
-        for (i3 in 1:length(sample.sizes)){
+        for (i3 in 4:length(sample.sizes)){
             for (i4 in 1:length(diff.probs)){
                 for (i5 in 1:length(targets)){
                     flag <- flag + 1
