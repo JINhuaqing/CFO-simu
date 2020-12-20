@@ -77,9 +77,9 @@ summary(fit.method)
 
 
 dat <- group_by(anova.data.df, Methods)
-dat <- group_by(anova.data.df, SampleSizes, Methods)
-dat <- group_by(anova.data.df, DiffProbs, Methods)
-dat <- group_by(anova.data.df, nLevels, Methods)
+dat <- group_by(anova.data.df, Methods, SampleSizes)
+dat <- group_by(anova.data.df, Methods, DiffProbs)
+dat <- group_by(anova.data.df, Methods, nLevels)
 summarise(dat, MTD.Sel=mean(MTD.Sel), MTD.Allo=mean(MTD.Allo))
 summarise(dat, Over.Sel=mean(Over.Sel), Over.Allo=mean(Over.Allo), 
           Risk.of.HT=mean(Risk.of.HT), PerDLT=mean(PerDLT))
