@@ -12,14 +12,13 @@ bet.prior <- 1-phi
 
 # Short-term memory coherence counter example
 cys <- c(0, 0, 0)
-cns <- c(3, 3, 3)
+cns <- c(4, 4, 3)
 make.decision.ORM.fn(phi, cys, cns, alp.prior, bet.prior, cover.doses, diag=FALSE)
 # move farword
 
 cys2 <- c(0, 1, 0)
-cns2 <- c(3, 4, 3)
+cns2 <- c(4, 4, 3)
 make.decision.ORM.fn(phi, cys2, cns2, alp.prior, bet.prior, cover.doses, diag=FALSE)
-
 
 
 
