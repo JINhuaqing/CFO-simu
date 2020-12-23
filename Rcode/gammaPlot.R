@@ -3,6 +3,7 @@ rm(list=ls())
 library(reshape2)
 library(ggplot2)
 setwd("C:/Users/JINHU/Documents/ProjectCode/CFO/Rcode")
+setwd("C:/Users/Dell/Documents/ProjectCode/CFO/Rcode")
 source("./utilities.R")
 source("./ORM_utils.R")
 
@@ -85,7 +86,7 @@ names(data) <- c("nC", "nR", "gammaR")
 
 p <- ggplot(data=data, mapping=aes(x=nR, y=nC)) + 
   geom_tile(aes(fill=gammaR)) + 
-  scale_fill_gradient2(expression(gamma[L]), low="#5bc5f4", mid="white", high="red",  
+  scale_fill_gradient2(expression(gamma[R]), low="#5bc5f4", mid="white", high="red",  
                        midpoint=mean(range(data$gammaR)), limits=range(data$gammaR)) +
   theme(legend.position = "right") + 
   ylab(expression(m[C])) +  xlab(expression(m[R])) +

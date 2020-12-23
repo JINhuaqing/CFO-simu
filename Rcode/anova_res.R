@@ -56,10 +56,10 @@ anova.data.df$DiffProbs <- as.factor(anova.data.df$DiffProbs)
 anova.data.df$Targets <- as.factor(anova.data.df$Targets)
 
 anova.data.df <- filter(anova.data.df, CohortSize==1|CohortSize==3,
-                        SampleSizes==21|SampleSizes==30|SampleSizes==48|SampleSizes==60,
-                        DiffProbs!=0.15)
+                        SampleSizes==21|SampleSizes==30|SampleSizes==48|SampleSizes==60)
+
 fit <- aov(MTD.Sel~(nLevels+CohortSize+SampleSizes+DiffProbs+Targets+Methods)*(nLevels+CohortSize+SampleSizes+DiffProbs+Targets+Methods), data=anova.data.df)
-#fit <- aov(MTD.Sel~nLevels+CohortSize+SampleSizes+DiffProbs+Targets+Methods, data=anova.data.df)
+fit <- aov(MTD.Sel~nLevels+CohortSize+SampleSizes+DiffProbs+Targets+Methods, data=anova.data.df)
 summary(fit)
 # main factors, DiffProbs, nLevels, SampleSize
 
