@@ -1,4 +1,4 @@
-rm(list=ls())
+#rm(list=ls())
 
 library(reshape2)
 library(ggplot2)
@@ -49,16 +49,22 @@ data$nL <- as.numeric(data$nL)
 data$nL <- as.factor(data$nL)
 
 names(data) <- c("nL", "nC", "gammaL")
+gammaL.new <- data$gammaL
+gammaL.new[gammaL.new>1] <- NA
+data$gammaL.new <- gammaL.new
 
-p <- ggplot(data=data, mapping=aes(x=nL, y=nC)) + 
-  geom_tile(aes(fill=gammaL)) + 
-  scale_fill_gradient2(expression(gamma[L]), low="#5bc5f4", mid="white", high="red",  
-                       midpoint=mean(range(data$gammaL))-0.1, limits=range(data$gammaL)) +
+p <- ggplot(data=data) + 
+  geom_tile(mapping=aes(x=nL, y=nC, fill=gammaL.new, colour="")) + 
+  scale_fill_gradient2(expression(gamma[L]), low="blue", mid="#e3c5c5", high="red",  
+                       midpoint=0.5, limits=c(0, 1), na.value = "#940000", breaks=c(0, 0.5, 1.0, 1.3, 2.2)) +
+  scale_colour_manual(values=NA) +              
+  guides(colour=guide_legend(expression(gamma[L]>"1.0"), override.aes=list(colour="#940000", fill="#940000")))  +
   theme(legend.position = "right") + 
   ylab(expression(m[C])) +  xlab(expression(m[L])) +
   scale_x_discrete(labels=seq(5, 30, 5), breaks=seq(5, 30, 5)) + 
   scale_y_discrete(labels=seq(5, 30, 5), breaks=seq(5, 30, 5)); p
 ggsave("../plots/gammaL.jpg", height=5, width = 6, unit="in")
+
 
 
 # 3 draw the plots for gammaR
@@ -83,15 +89,22 @@ data$nC <- as.numeric(data$nC)
 data$nC <- as.factor(data$nC)
 
 names(data) <- c("nC", "nR", "gammaR")
+gammaR.new <- data$gammaR
+gammaR.new[gammaR.new>2.2] <- NA
+data$gammaR.new <- gammaR.new
 
-p <- ggplot(data=data, mapping=aes(x=nR, y=nC)) + 
-  geom_tile(aes(fill=gammaR)) + 
-  scale_fill_gradient2(expression(gamma[R]), low="#5bc5f4", mid="white", high="red",  
-                       midpoint=mean(range(data$gammaR)), limits=range(data$gammaR)) +
+p <- ggplot(data=data) + 
+  geom_tile(mapping=aes(x=nR, y=nC, fill=gammaR.new, colour="")) + 
+  scale_fill_gradient2(expression(gamma[R]), low="blue", mid="#e3c5c5", high="red",  
+                       midpoint=1.1, limits=c(0, 2.2), na.value = "#940000", breaks=c(0, 0.5, 1.0, 1.5, 2.2)) +
+  scale_colour_manual(values=NA) +              
+  guides(colour=guide_legend(expression(gamma[R]>"2.2"), override.aes=list(fill="#940000")))  +
   theme(legend.position = "right") + 
   ylab(expression(m[C])) +  xlab(expression(m[R])) +
   scale_x_discrete(labels=seq(5, 30, 5), breaks=seq(5, 30, 5)) + 
-  scale_y_discrete(labels=seq(5, 30, 5), breaks=seq(5, 30, 5))
-p
+  scale_y_discrete(labels=seq(5, 30, 5), breaks=seq(5, 30, 5)) ;p
+
 ggsave("../plots/gammaR.jpg", height=5, width = 6, unit="in")
+
+
 
