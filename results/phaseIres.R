@@ -1,10 +1,11 @@
 setwd("../results/")
-fil <- dir(pattern="5000fix_4")
+fil <- dir(pattern="5000random_0.15")
 fil
 load(fil)
 
 setwd("../Rcode")
 source("utilities.R")
+# post.process.random(results) # for random cases
 
 
 nsimu <- 5000

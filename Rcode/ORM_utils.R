@@ -4,6 +4,13 @@ source("utilities.R")
 library(magrittr)
 library(BOIN)
 
+# posterior probability of pj >= phi given data
+post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
+    alp <- alp.prior + y 
+    bet <- bet.prior + n - y
+    1 - pbeta(phi, alp, bet)
+}
+
 
 
 Odds.samples <- function(y1, n1, y2, n2, alp.prior, bet.prior){
