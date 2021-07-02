@@ -52,8 +52,7 @@ boin.simu.fn <- function(target, p.true, ncohort, cohortsize, init.level=1){
     if (earlystop == 1) {
         MTD <- 99
     }else {
-        MTD <- select.mtd(target, n, y,
-                          verbose = FALSE)$MTD
+        MTD <- select.mtd(target, n, y)$MTD
     }
     list(MTD=MTD, dose.ns=n, DLT.ns=y, p.true=p.true, target=target)
 }

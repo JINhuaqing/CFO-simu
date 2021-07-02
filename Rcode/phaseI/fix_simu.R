@@ -11,19 +11,20 @@ source("ORM_utils.R")
 
 set.seed(0)
 target <- 0.30
-ncohort <- 10
+ncohort <- 12
 cohortsize <- 3
 init.level <- 1
-nsimu <- 5000
+nsimu <- 1000
 
 add.args <- list(alp.prior=target, bet.prior=1-target)
 p.trues <- list()
 p.trues[[1]] <- c(0.30, 0.45, 0.58, 0.70, 0.80) # good
-p.trues[[2]] <- c(0.18, 0.30, 0.52, 0.60, 0.70) # good
+p.trues[[2]] <- c(0.01, 0.30, 0.35, 0.40, 0.42) # good
 p.trues[[3]] <- c(0.12, 0.20, 0.30, 0.40, 0.50) # good
-p.trues[[4]] <- c(0.01, 0.05, 0.08, 0.10, 0.30) # good
+p.trues[[4]] <- c(0.01, 0.02, 0.30, 0.35, 0.40) 
+p.trues[[5]] <- c(0.01, 0.02, 0.15, 0.16, 0.30) 
 
-idx <- 3
+idx <- 4
 p.true <- p.trues[[idx]]
 tmtd <- MTD.level(target, p.true)
 
@@ -51,8 +52,11 @@ run.fn <- function(i){
     
 }
 
-results <- mclapply(1:nsimu, run.fn, mc.cores=20)
-file.name <- paste0("../results/", "MTDSimu_", nsimu, "fix_",  idx, ".RData")
+RNGkind("L'Ecuyer-CMRG")
+set.seed(2021) #10
+
+results <- mclapply(1:nsimu, run.fn, mc.cores=75)
+file.name <- paste0("../results/JRSSC-R/", "Hard_MTDSimu_", nsimu, "fix_",  idx, ".RData")
 save(results, file=file.name)
 
 crm.ress <- lapply(1:nsimu, function(i)results[[i]]$crm)

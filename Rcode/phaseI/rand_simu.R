@@ -7,9 +7,8 @@ source("./phaseI/boin_utils.R")
 source("ORM_utils.R")
 
 
-#set.seed(10)
 target <- 0.3
-ncohort <- 10
+ncohort <- 12
 cohortsize <- 3
 
 add.args <- list(alp.prior=target, bet.prior=1-target)
@@ -22,7 +21,7 @@ add.args <- list(alp.prior=target, bet.prior=1-target)
 
 # dose 5, mu1=0.60, mu2=0.50, 0.1
 # dose 5, mu1=mu2=0.23, 0.05
-# dose 5, mu1=mu2=0.38, 0.07
+# dose 5, mu1=mu2=0.38, 0.07 # no this one
 # dose 5, mu1=mu2=0.53, 0.1
 # dose 5, mu1=mu2=0.71, 0.15
 
@@ -31,7 +30,7 @@ add.args <- list(alp.prior=target, bet.prior=1-target)
 # dose 7, mu1=mu2=0.56, 0.1
 # dose 7, mu1=mu2=0.74, 0.15
 
-mu <- 0.23
+mu <- 0.38
 run.fn <- function(k){
     print(k)
     p.true.all <- gen.rand.doses(5, target, mu1=mu, mu2=mu)
@@ -56,10 +55,12 @@ run.fn <- function(k){
     ress
 }
 
+RNGkind("L'Ecuyer-CMRG")
+set.seed(2021) #10
 
 nsimu <- 5000
-file.name <- paste0("../results/", "MTDSimu_", nsimu, "random_0.05",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=20)
+file.name <- paste0("../results/JRSSC-R/", "Hard_MTDSimu_", nsimu, "random_0.05",  ".RData")
+results <- mclapply(1:nsimu, run.fn, mc.cores=75)
 post.process.random(results)
 save(results, file=file.name)
 
