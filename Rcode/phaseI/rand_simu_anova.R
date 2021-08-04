@@ -50,9 +50,11 @@ mus.list[[3]][[3]] <- c(0.25, 0.40, 0.54, 0.72)
 mus.list[[3]][[4]] <- c(0.27, 0.42, 0.56, 0.74)
 
 flag <- 0
-for (i1 in 4:length(nlevels)){
+for (i1 in 1:3){
+#for (i1 in 4:length(nlevels)){
     for (i2 in 1:length(csizes)){
-        for (i3 in c(2, 6, 8, 9)){ # sample size
+        for (i3 in 1:length(sample.sizes)){ # sample size
+        #for (i3 in c(2, 6, 8, 9)){ # sample size
             for (i4 in 1:length(diff.probs)){
                 for (i5 in 1:length(targets)){
                     flag <- flag + 1
@@ -92,8 +94,8 @@ for (i1 in 4:length(nlevels)){
                     }
                     
                     
-                    file.name <- paste0("../results/", "Anova_MTDSimu_", i1, i2, i3, i4, i5, "_", nsimu, ".RData")
-                    results <- mclapply(1:nsimu, run.fn, mc.cores=20)
+                    file.name <- paste0("../results/", "JRSSC-R/Anova_MTDSimu_", i1, i2, i3, i4, i5, "_", nsimu, ".RData")
+                    results <- mclapply(1:nsimu, run.fn, mc.cores=40)
                     #post.process.random(results)
                     save(results, file=file.name)
                 }

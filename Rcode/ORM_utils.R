@@ -264,10 +264,12 @@ ORM.simu.fn <- function(phi, p.true, ncohort=12, init.level=1,
             cys <- tys[(cidx-1):(cidx+1)]
             cns <- tns[(cidx-1):(cidx+1)]
             cover.doses <- tover.doses[(cidx-1):(cidx+1)]
+            #cover.doses <- c(0, 0, 0) # No elimination rule
         }else{
             cys <- c(NA, tys[1:(cidx+1)])
             cns <- c(NA, tns[1:(cidx+1)])
             cover.doses <- c(NA, tover.doses[1:(cidx+1)])
+            #cover.doses <- c(NA, 0, 0) # No elimination rule
         }
         
         idx.chg <- make.decision.ORM.fn(phi, cys, cns, add.args$alp.prior, add.args$bet.prior, cover.doses) - 2

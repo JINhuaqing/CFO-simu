@@ -39,7 +39,7 @@ boin.simu.fn <- function(target, p.true, ncohort, cohortsize, init.level=1){
             }
         }
         if (y[d] <= b.e[n[d]] && d != ndose) {
-            if (elimi[d + 1] == 0) 
+            if (elimi[d + 1] == 0)  # elimination rule
                 d = d + 1
         }
         else if (y[d] >= b.d[n[d]] && d != 1) {

@@ -9,20 +9,19 @@ source("./phaseI/boin_utils.R")
 source("ORM_utils.R")
 
 
-set.seed(0)
-target <- 0.30
-ncohort <- 12
+target <- 0.33
+ncohort <- 10
 cohortsize <- 3
 init.level <- 1
-nsimu <- 1000
+nsimu <- 5000
 
 add.args <- list(alp.prior=target, bet.prior=1-target)
 p.trues <- list()
-p.trues[[1]] <- c(0.30, 0.45, 0.58, 0.70, 0.80) # good
-p.trues[[2]] <- c(0.01, 0.30, 0.35, 0.40, 0.42) # good
-p.trues[[3]] <- c(0.12, 0.20, 0.30, 0.40, 0.50) # good
-p.trues[[4]] <- c(0.01, 0.02, 0.30, 0.35, 0.40) 
-p.trues[[5]] <- c(0.01, 0.02, 0.15, 0.16, 0.30) 
+p.trues[[1]] <- c(0.33, 0.45, 0.58, 0.70, 0.80) # good
+p.trues[[2]] <- c(0.18, 0.33, 0.52, 0.60, 0.70) 
+p.trues[[3]] <- c(0.12, 0.20, 0.33, 0.40, 0.50) # good
+p.trues[[4]] <- c(0.01, 0.02, 0.03, 0.33, 0.50) 
+p.trues[[5]] <- c(0.00, 0.00, 0.05, 0.10, 0.33) # good
 
 idx <- 4
 p.true <- p.trues[[idx]]
@@ -30,6 +29,7 @@ tmtd <- MTD.level(target, p.true)
 
 
 run.fn <- function(i){
+    set.seed(seeds[i]) #10
     print(i)
     orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize,
                                 init.level=init.level,  add.args=add.args)
@@ -52,8 +52,7 @@ run.fn <- function(i){
     
 }
 
-RNGkind("L'Ecuyer-CMRG")
-set.seed(2021) #10
+seeds <- 1:nsimu
 
 results <- mclapply(1:nsimu, run.fn, mc.cores=75)
 file.name <- paste0("../results/JRSSC-R/", "Hard_MTDSimu_", nsimu, "fix_",  idx, ".RData")

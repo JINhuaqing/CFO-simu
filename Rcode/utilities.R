@@ -240,8 +240,10 @@ prob.diff.fn.sep <- function(res, target=0.3){
 
 
 
-#ress <- lapply(1:10000, function(i)gen.rand.doses(7, 0.3, mu1=0.70, mu2=0.50))
-#sapply(ress, prob.diff.fn, target=0.3) %>% mean
+#mu <- 0.69
+#phi <- 0.33
+#ress <- lapply(1:10000, function(i)gen.rand.doses(5, phi, mu1=mu, mu2=mu))
+#sapply(ress, prob.diff.fn, target=phi) %>% mean
 #tmp <- lapply(ress, prob.diff.fn.sep, target=0.3)
 #sapply(tmp, function(i)i$L) %>% unlist %>% mean
 #sapply(tmp, function(i)i$U) %>% unlist %>% mean
