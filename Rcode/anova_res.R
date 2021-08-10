@@ -4,10 +4,10 @@ setwd("C:/Users/Dell/Documents/ProjectCode/CFO")
 setwd("C:/Users/JINHU/Documents/ProjectCode/CFO")
 source("./Rcode/utilities.R")
 source("./Rcode/phaseI/anova_settings.R")
-anova.ress <- dir("./results/Anovas", pattern="*.RData", full.names = TRUE)
+anova.ress <- dir("./results/JRSSC-R/Anovas_New", pattern="*.RData", full.names = TRUE)
 
 sep.paths <- strsplit(anova.ress, "_")
-raw.labs <- sapply(sep.paths, function(i)i[3])
+raw.labs <- sapply(sep.paths, function(i)i[4])
 tmp.fn <- function(i){
     if (length(i)==5){
         return(as.numeric(i))
@@ -77,10 +77,11 @@ summary(fit.method)
 
 
 dat <- group_by(anova.data.df, Methods)
-dat <- group_by(anova.data.df, Methods, SampleSizes)
+dat <- group_by(anova.data.df, SampleSizes, Methods)
 dat <- group_by(anova.data.df, Methods, DiffProbs)
 dat <- group_by(anova.data.df, Methods, nLevels)
-summarise(dat, MTD.Sel=mean(MTD.Sel), MTD.Allo=mean(MTD.Allo))
+#dat <- group_by(anova.data.df, Targets, Methods)
+summarise(dat, MTD.Sel=mean(MTD.Sel), MTD.Allo=mean(MTD.Allo), Over.Sel=mean(Over.Sel), Over.Allo=mean(Over.Allo))# %>% View()
 summarise(dat, Over.Sel=mean(Over.Sel), Over.Allo=mean(Over.Allo), 
           Risk.of.HT=mean(Risk.of.HT), PerDLT=mean(PerDLT))
 

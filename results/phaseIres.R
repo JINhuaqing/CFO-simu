@@ -1,11 +1,11 @@
-setwd("../results/")
-fil <- dir(pattern="5000random_0.15")
+#setwd("./results/JRSSC-R")
+fil <- dir(pattern="5000fix_5")
+#fil <- dir(pattern="5000random_0.05")
 fil
 load(fil)
 
-setwd("../Rcode")
-source("utilities.R")
-# post.process.random(results) # for random cases
+source("../../Rcode/utilities.R")
+#post.process.random(results) # for random cases
 
 
 nsimu <- 5000
@@ -18,7 +18,7 @@ sum.all <- list(
                 CRM = phase1.post.fn(crm.ress)
                 )
 tb <- phase.I.pretty.tb(sum.all); tb
-tb <- tb[, -7];tb
+tb <- tb[, -c(6, 7)];tb
 
 tb[c(2, 1, 3), ]
 
