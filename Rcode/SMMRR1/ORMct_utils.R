@@ -160,7 +160,7 @@ optim.gamma.fn <- function(n1, n2, phi, type, alp.prior, bet.prior){
     list(gamma=gam, min.err=min.err)
 }
 
-make.decision.ORMcov.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.doses, diag=FALSE){
+make.decision.ORMct.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.doses, diag=FALSE){
     if (cover.doses[2] == 1){
         return(1)
     }else{
@@ -190,10 +190,14 @@ make.decision.ORMcov.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.d
            OR.v2 <- OR.values(phi, cys[2], cns[2], cys[3], cns[3], alp.prior, bet.prior, type="R")
            v1 <- OR.v1 > gam1
            v2 <- OR.v2 > gam2
+           if (v1 & v2) {
+                # to count number of >gam1 and > gam2 cases
+                return(0)
+           }
            # more conservative way
-           if (v1){
+           if (v1 & !v2){
                return(1)
-           }else if (v2){
+           }else if (!v1 & v2){
                return(3)
            }else{
                return(2)
@@ -216,7 +220,7 @@ overdose.fn <- function(phi, add.args=list()){
 }
 
 # Simulation function for ORM 
-ORMcov.simu.fn <- function(phi, p.true, ncohort=12, init.level=1, 
+ORMct.simu.fn <- function(phi, p.true, ncohort=12, init.level=1, 
                               cohortsize=1, add.args=list()){
     # phi: Target DIL rate
     # p.true: True DIL rates under the different dose levels
@@ -230,6 +234,7 @@ ORMcov.simu.fn <- function(phi, p.true, ncohort=12, init.level=1,
     tys <- rep(0, ndose) # number of responses for different doses.
     tns <- rep(0, ndose) # number of subject for different doses.
     tover.doses <- rep(0, ndose) # Whether each dose is overdosed or not, 1 yes
+    contradic.count <- rep(0, ncohort)
     
     
     
@@ -274,7 +279,11 @@ ORMcov.simu.fn <- function(phi, p.true, ncohort=12, init.level=1,
             #cover.doses <- c(NA, 0, 0) # No elimination rule
         }
         
-        idx.chg <- make.decision.ORMcov.fn(phi, cys, cns, add.args$alp.prior, add.args$bet.prior, cover.doses) - 2
+        idx.chg <- make.decision.ORMct.fn(phi, cys, cns, add.args$alp.prior, add.args$bet.prior, cover.doses) - 2
+        if (idx.chg == -2){
+            contradic.count[i] <- 1
+            idx.chg <- -1
+        }
             
         
         cidx <- idx.chg + cidx
@@ -287,6 +296,7 @@ ORMcov.simu.fn <- function(phi, p.true, ncohort=12, init.level=1,
     }else{
         MTD <- 99
     }
-    list(MTD=MTD, dose.ns=tns, DLT.ns=tys, p.true=p.true, target=phi, over.doses=tover.doses)
+    list(MTD=MTD, dose.ns=tns, DLT.ns=tys, p.true=p.true, target=phi, 
+         over.doses=tover.doses, contradic.count=contradic.count)
 }
 

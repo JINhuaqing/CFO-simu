@@ -2,8 +2,7 @@ setwd("../")
 library(magrittr)
 library(parallel)
 source("utilities.R")
-source("ORM_utils.R")
-source("./SMMRR1/ORMcov_utils.R")
+source("./SMMRR1/ORMct_utils.R")
 
 
 target <- 0.33
@@ -43,12 +42,10 @@ run.fn <- function(k){
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
-    orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-    ormcov.res <- ORMcov.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+    orm.res <- ORMct.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 
     ress <- list(
                  orm=orm.res,
-                 ormcov=ormcov.res,
                  paras=list(p.true=p.true, 
                          mtd=tmtd, 
                          add.args=add.args,
@@ -60,10 +57,10 @@ run.fn <- function(k){
 }
 
 
-nsimu <- 500
+nsimu <- 5000
 seeds <- 1:nsimu
-file.name <- paste0("../results/SMMR-R1/", "ConvWay_MTDSimu_", nsimu, "random_0.05",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=10)
+file.name <- paste0("../results/SMMR-R1/", "ContraCT_MTDSimu_", nsimu, "random_0.05",  ".RData")
+results <- mclapply(1:nsimu, run.fn, mc.cores=20)
 post.process.random(results)
 save(results, file=file.name)
 
