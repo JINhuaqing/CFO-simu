@@ -1,5 +1,7 @@
-setwd("C:/Users/JINHU/Documents/ProjectCode/CFO")
+#setwd("C:/Users/JINHU/Documents/ProjectCode/CFO")
+setwd("/home/r6user2/MyResearch/CFO/")
 library(dfcrm)
+library(parallel)
 source("Rcode/phaseI/crm_utils.R")
 source("Rcode/utilities.R")
 
@@ -46,13 +48,20 @@ crm.cal.single <- function(delta, phi, psi, ndose, nu, ncohort, cohortsize=3){
    pcss <- c()
    nsim <- 1000
    for (k in 1:ndose){
-       ress <- list()
-       for (i in 1:nsim){
-           res <- crm.simu.fn(target=phi, p.true=cal.Set[[1]], p.prior=p.prior, 
-                          cohortsize=cohortsize, ncohort=ncohort)
-           ress[[i]] <- res
+       # for linux 
+       run.fn <- function(i){
+           res <- crm.simu.fn(target=phi, p.true=cal.Set[[k]], p.prior=p.prior, cohortsize=cohortsize, ncohort=ncohort)
+           res
        }
-       pcss <- c(PCS.fn(ress), pcss)
+       ress <- mclapply(1:nsim, run.fn, mc.cores=40)
+       # for windows
+       # ress <- list()
+       # for (i in 1:nsim){
+       #     res <- crm.simu.fn(target=phi, p.true=cal.Set[[k]], p.prior=p.prior, 
+       #                    cohortsize=cohortsize, ncohort=ncohort)
+       #     ress[[i]] <- res
+       # }
+       pcss <- c(pcss, PCS.fn(ress))
        
    }
    
@@ -73,11 +82,22 @@ crm.cal <- function(deltas, phi, psi, ndose, nu, ncohort, cohortsize=3){
     for (delta in deltas){
            pcss <-  crm.cal.single(delta, phi, psi, ndose, nu, ncohort, cohortsize)
            a.pcs <- mean(pcss)
-           a.pcss <- c(a.pcs, a.pcss)
+           a.pcss <- c(a.pcss, a.pcs)
         
     }
     
     a.pcss
+}
 
+phi <- 0.3
+deltas <- c(0.01, phi-0.05, 0.01)
+psi <- 2
+ndose <- 5
+ncohort <- 10
 
+for (ndose in c(3, 5, 7, 9)){
+nu <- ceiling(ndose/2)
+res <- crm.cal(deltas, phi, psi, ndose, nu, ncohort)
+f.Name <- paste0("./results/SMMR-R1/CRM_cal_phi", phi*100, "_ndose_", ndose, "_ncohort_", ncohort, ".RData")
+save(res, file=f.Name)
 }

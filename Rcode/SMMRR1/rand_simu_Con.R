@@ -35,7 +35,7 @@ add.args <- list(alp.prior=target, bet.prior=1-target)
 # dose 5, mu1=mu2=0.52, 0.1
 # dose 5, mu1=mu2=0.69, 0.15
 
-mu <- 0.69
+mu <- 0.21
 run.fn <- function(k){
     set.seed(seeds[k])
     print(k)
@@ -43,8 +43,8 @@ run.fn <- function(k){
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
-    orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     ormcon.res <- ORMcon.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+    orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
 
     ress <- list(
                  orm=orm.res,
@@ -62,7 +62,7 @@ run.fn <- function(k){
 
 nsimu <- 5000
 seeds <- 1:nsimu
-file.name <- paste0("../results/SMMR-R1/", "ConWay_MTDSimu_", nsimu, "random_0.15",  ".RData")
+file.name <- paste0("../results/SMMR-R1/", "ConWay2_MTDSimu_", nsimu, "random_0.05",  ".RData")
 results <- mclapply(1:nsimu, run.fn, mc.cores=20)
 post.process.random(results)
 save(results, file=file.name)

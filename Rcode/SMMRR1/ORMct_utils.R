@@ -194,8 +194,15 @@ make.decision.ORMct.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.do
                 # to count number of >gam1 and > gam2 cases
                 return(0)
            }
+           if (v1) {
+               if (v2){
+                print("test test")
+               }
+               print(c(v1, v2))
+           }
            # more conservative way
            if (v1 & !v2){
+                #print("test test test")
                return(1)
            }else if (!v1 & v2){
                return(3)
