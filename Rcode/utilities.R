@@ -161,12 +161,17 @@ latex.out.fn <- function(res, prefix, tidx, suffix=NULL){
 }
 
 # Gnerate dose toxicity relations randomly
-gen.rand.doses <- function(ndose, target, mu1=0.55, mu2=0.55, inv.fn=qnorm, fn=pnorm){
+gen.rand.doses <- function(ndose, target, mu1=0.55, mu2=0.55, inv.fn=qnorm, fn=pnorm, MTD=NA){
     sigma0 <- 0.05
     sigma1 <- 0.35
     sigma2 <- 0.35
     raw.p.trues <- rep(0, ndose)
-    mtd.level <- sample.int(ndose, 1)
+    if (is.na(MTD)){
+        mtd.level <- sample.int(ndose, 1)
+    }else{
+        mtd.level <- MTD
+    }
+    
     raw.p.trues[mtd.level] <- rnorm(1, inv.fn(target), sigma0)
     
     if (mtd.level != 1){
@@ -405,3 +410,94 @@ post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
     1 - pbeta(phi, alp, bet)
 }
 
+
+#plot phase I/II scenarios
+phaseI_II.scenario.plot.fn <- function(p.true, pE.true, main="Plateau", OBD=NULL){
+    ndose <- length(p.true)
+    lvls <- 1:ndose
+    cols <- c("black", "red")
+    lwds <- c(2, 2)
+    ltys <- c(1, 2)
+    pchs <- c(15, 16)
+    plot(1:ndose, p.true, ylab = "Probability", xlab="Dose level", ylim=c(0, 0.8), main=main, xaxt="n", 
+         type="b", 
+         lwd=lwds[1], col=cols[1], lty=ltys[1], pch=pchs[1])
+    if (is.null(OBD)){
+        axis(1, at=lvls, lvls)
+    }else{
+        axis(1, at=OBD, paste0(OBD, "*"), col.axis="red", font.axis=2)
+        axis(1, at=lvls[-OBD], lvls[-OBD])
+    }
+    lines(1:ndose, pE.true, type="b", lwd=lwds[2], col=cols[2], lty=ltys[2], pch=pchs[2])
+    #    legend("topleft", c("DLT rate", "Efficacy rate"), col=cols, lty=ltys, lwd=lwds, pch=pchs)
+}
+
+
+# Generate phase I/II scenarios
+gen.rand.doses.plateau <- function(ndose, phi, psi, psi.U, mu1, mu2){
+  # args:
+  # ndose: number of dose levels
+  # phi: DLT target rate
+  # psi: the maximal acceptable efficacy rate 
+  # psi.U: the upper bound of the efficacy rate
+  # mu1, mu2: parameters for phase I trial
+    k.OBD <- sample.int(ndose, 1)
+    k.MTD <- sample(k.OBD:ndose, 1)
+    
+    ps <- gen.rand.doses(ndose, phi, mu1, mu2, MTD=k.MTD)
+    
+    q.OBD <- runif(1, psi, psi.U)
+    if (k.OBD == 1){
+        qs <- rep(q.OBD, ndose)
+    }else if (k.OBD == ndose){
+        qs.l <- sort(runif(ndose-1, 0, q.OBD))
+        qs <- c(qs.l, q.OBD)
+    }else {
+        qs.l <- sort(runif(k.OBD-1, 0, q.OBD))
+        qs.u <- rep(q.OBD, ndose-k.OBD)
+        qs <- c(qs.l, q.OBD, qs.u)
+    }
+    
+    res <- list(
+        qs=qs,
+        ps=ps$p.trues, 
+        k.MTD=k.MTD, 
+        k.OBD=k.OBD
+    )
+    res
+}
+
+gen.rand.doses.umbrella <- function(ndose, phi, psi, psi.U, mu1, mu2){
+  # args:
+  # ndose: number of dose levels
+  # phi: DLT target rate
+  # psi: the maximal acceptable efficacy rate 
+  # psi.U: the upper bound of the efficacy rate
+  # mu1, mu2: parameters for phase I trial
+  
+    k.OBD <- sample.int(ndose, 1)
+    k.MTD <- sample(k.OBD:ndose, 1)
+    
+    ps <- gen.rand.doses(ndose, phi, mu1, mu2, MTD=k.MTD)
+    
+    q.OBD <- runif(1, psi, psi.U)
+    if (k.OBD == 1){
+        qs.u <- sort(runif(ndose-1, 0, q.OBD), decreasing=TRUE)
+        qs <- c(q.OBD, qs.u)
+    }else if (k.OBD == ndose){
+        qs.l <- sort(runif(ndose-1, 0, q.OBD))
+        qs <- c(qs.l, q.OBD)
+    }else {
+        qs.l <- sort(runif(k.OBD-1, 0, q.OBD))
+        qs.u <- sort(runif(ndose-k.OBD, 0, q.OBD), decreasing=TRUE)
+        qs <- c(qs.l, q.OBD, qs.u)
+    }
+    
+    res <- list(
+        qs=qs,
+        ps=ps$p.trues, 
+        k.MTD=k.MTD, 
+        k.OBD=k.OBD
+    )
+    res
+}
