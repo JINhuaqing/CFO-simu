@@ -90,14 +90,23 @@ crm.cal <- function(deltas, phi, psi, ndose, nu, ncohort, cohortsize=3){
 }
 
 phi <- 0.3
-deltas <- c(0.01, phi-0.05, 0.01)
 psi <- 2
 ndose <- 5
 ncohort <- 10
-
-for (ndose in c(3, 5, 7, 9)){
 nu <- ceiling(ndose/2)
-res <- crm.cal(deltas, phi, psi, ndose, nu, ncohort)
-f.Name <- paste0("./results/SMMR-R1/CRM_cal_phi", phi*100, "_ndose_", ndose, "_ncohort_", ncohort, ".RData")
-save(res, file=f.Name)
+deltas <- seq(0.01, min(phi-0.005, 0.15), 0.01)
+
+flag <- 1
+for (ndose in c(3, 5, 7, 9)){
+    for (ncohort in c(7, 10, 16, 20)){
+        for (phi in c(0.25, 0.30, 0.33)){
+            nu <- ceiling(ndose/2)
+            deltas <- seq(0.01, min(phi-0.005, 0.15), 0.01)
+            print(c(flag, ndose, ncohort, phi))
+            res <- crm.cal(deltas, phi, psi, ndose, nu, ncohort)
+            f.Name <- paste0("./results/SMMR-R1/CRM_cal_phi", phi*100, "_ndose_", ndose, "_ncohort_", ncohort, ".RData")
+            save(res, file=f.Name)
+            flag <- flag + 1
+        }
+    }
 }

@@ -1,5 +1,7 @@
 # Conservative way 
 # if > \gamma_L, deescalate
+# the same with ORMct_utis.R
+# I think this file is more formal
 
 source("utilities.R")
 library(magrittr)

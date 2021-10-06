@@ -1,3 +1,4 @@
+# compare CFO with conservative CFO
 setwd("../")
 library(magrittr)
 library(parallel)

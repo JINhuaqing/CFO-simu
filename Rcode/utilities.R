@@ -104,7 +104,8 @@ phase1.post.fn <- function(ress){
         tol.Subjs <- tol.Subjs + sum(res$dose.ns)
     }
     
-    sum.v <- list(Allocation=numTrials*100*Allo/tol.Subjs, Selection=Sel*100,
+    sum.v <- list(Allocation=Allo, Selection=Sel*100,
+    #sum.v <- list(Allocation=numTrials*100*Allo/tol.Subjs, Selection=Sel*100,
                   toxs.nums=toxs.cts,
                   DLTs = numTrials*100*sum(toxs.cts)/tol.Subjs,
                   tol.Subjs=tol.Subjs, errStop=100*(numTrials-nonErrStops),

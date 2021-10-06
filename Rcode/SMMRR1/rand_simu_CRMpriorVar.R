@@ -1,10 +1,11 @@
-# Count the case where 
-# > gamL and > gamR
+# comapre CRM with prior var 2 and 1.34
+# No sig diff
 setwd("../")
 library(magrittr)
 library(parallel)
 source("utilities.R")
-source("./SMMRR1/ORMct_utils.R")
+source("./phaseI/crm_utils.R")
+source("./SMMRR1/crm2_utils.R")
 
 
 target <- 0.33
@@ -36,7 +37,7 @@ add.args <- list(alp.prior=target, bet.prior=1-target)
 # dose 5, mu1=mu2=0.52, 0.1
 # dose 5, mu1=mu2=0.69, 0.15
 
-mu <- 0.21
+mu <- 0.69
 run.fn <- function(k){
     set.seed(seeds[k])
     print(k)
@@ -44,10 +45,12 @@ run.fn <- function(k){
     p.true <- p.true.all$p.true
     tmtd <- p.true.all$mtd.level
 
-    orm.res <- ORMct.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
+    crm.res <- crm.simu.fn(target=target, p.true=p.true, cohortsize=cohortsize, ncohort=ncohort)
+    crm.res2 <- crm2.simu.fn(target=target, p.true=p.true, cohortsize=cohortsize, ncohort=ncohort)
 
     ress <- list(
-                 orm=orm.res,
+                 crm = crm.res, 
+                 crm2 = crm.res2, 
                  paras=list(p.true=p.true, 
                          mtd=tmtd, 
                          add.args=add.args,
@@ -61,8 +64,8 @@ run.fn <- function(k){
 
 nsimu <- 5000
 seeds <- 1:nsimu
-file.name <- paste0("../results/SMMR-R1/", "ContraCT_MTDSimu_", nsimu, "random_0.05",  ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=20)
+#file.name <- paste0("../results/SMMR-R1/", "CRMVar_MTD", nsimu, "random_0.05",  ".RData")
+results <- mclapply(1:nsimu, run.fn, mc.cores=75)
 post.process.random(results)
-save(results, file=file.name)
+#save(results, file=file.name)
 
