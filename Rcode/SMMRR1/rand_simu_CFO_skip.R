@@ -64,8 +64,10 @@ ress2 <- mclapply(1:nsim, run.fn2, mc.cores=ncore)
 save.f.Name1 <- paste0("../results/SMMR-R1/phase12_CFO_nsim", nsim, "_ndose", ndose, "_phi", phi*100, "_phiE", phiE*100, "_mu", mu1*100, ".RData")
 save.f.Name2 <- paste0("../results/SMMR-R1/phase12_CFO2_nsim", nsim, "_ndose", ndose, "_phi", phi*100, "_phiE", phiE*100, "_mu", mu1*100, ".RData")
 
-#sum.res.orm <- phase12.post.fn(ress1)
-#sum.res.orm.alter <- phase12.post.fn(ress2)
+# save.f.Name1 <- paste0("../results/SMMR-R1/phase12_CFO_nsim", nsim, "_ndose", ndose, "_phi", 
+#         phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
+# save.f.Name2 <- paste0("../results/SMMR-R1/phase12_CFO2_nsim", nsim, "_ndose", ndose, "_phi", 
+#         phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 
 
 

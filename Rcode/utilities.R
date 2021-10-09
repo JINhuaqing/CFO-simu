@@ -502,3 +502,71 @@ gen.rand.doses.umbrella <- function(ndose, phi, psi, psi.U, mu1, mu2){
     )
     res
 }
+
+
+## Below, the three functions are used for processing results under random scenarios for phase I/II trials
+phase12.post.process.single <- function(res){
+    ndose <- length(res$p.true)
+    rv <- rep(0, 9)
+    rv[1] <- sum(res$OBD==res$k.OBD) # OBD sel
+    rv[2] <- res$dose.ns[res$k.OBD] # OBD allo
+    if (res$OBD== 99){ # over sel
+        rv[3] <- 0
+    }else{
+        rv[3] <- sum(res$OBD>res$k.MTD)
+    }
+    if (res$k.MTD==ndose){ # over allo
+        rv[4] <- 0
+    }else{
+        rv[4] <- sum(res$dose.ns[(res$k.MTD+1):ndose])
+    }
+    # good bio dose
+    GBDs <- 1:res$k.MTD
+    GBDs[res$pE.true[1:res$k.MTD] > res$min.eff]
+    rv[5] <- sum(res$OBD %in% GBDs) #GBD sel
+    rv[6] <- sum(res$dose.ns[GBDs]) # GBD allo
+    rv[7] <- sum(res$DLT.ns)
+    rv[8] <- sum(res$eff.ns)
+    rv[9] <- sum(res$dose.ns)
+    names(rv) <- c(
+            "OBD Sel", "OBD Allo", "Over Sel", 
+            "Over Allo", "GBD Sel", "GBD Allo", 
+            "No DLT", "No Eff", "No Subject")
+        rv
+}
+    
+phase12.post.process.random <- function(results){
+    nsimu <- length(results)
+    res.all <- 0
+    for (result in results){
+        res.all <- phase12.post.process.single(result) + res.all
+    }
+    res.all.df <- data.frame(t(res.all))
+    final.res <- transmute(res.all.df, 
+                           OBD.Sel=OBD.Sel/nsimu,
+                           OBD.Allo=OBD.Allo/No.Subject,
+                           Over.Sel=Over.Sel/nsimu,
+                           Over.Allo=Over.Allo/No.Subject,
+                           GBD.Sel = GBD.Sel/nsimu, 
+                           GBD.Allo = GBD.Allo/No.Subject, 
+                           PerDLT=No.DLT/No.Subject,
+                           PerEff=No.Eff/No.Subject,
+                           AvgSub=No.Subject/nsimu
+    )
+    final.res
+}
+
+phase12.post.process.random.all <- function(..., names){
+  #args:
+  # ...: results for each method
+  # names: name for each method
+    all.DF <- c()
+    for (ress in list(...)){
+        all.DF <- rbind(all.DF, phase12.post.process.random(ress))
+        
+    }
+    if (!missing(names))
+        rownames(all.DF) <- names
+    
+    all.DF
+}
