@@ -439,7 +439,7 @@ gen.rand.doses.plateau <- function(ndose, phi, psi, psi.U, mu1, mu2){
   # args:
   # ndose: number of dose levels
   # phi: DLT target rate
-  # psi: the maximal acceptable efficacy rate 
+  # psi: the minimal acceptable efficacy rate 
   # psi.U: the upper bound of the efficacy rate
   # mu1, mu2: parameters for phase I trial
     k.OBD <- sample.int(ndose, 1)
@@ -472,7 +472,7 @@ gen.rand.doses.umbrella <- function(ndose, phi, psi, psi.U, mu1, mu2){
   # args:
   # ndose: number of dose levels
   # phi: DLT target rate
-  # psi: the maximal acceptable efficacy rate 
+  # psi: the minimal acceptable efficacy rate 
   # psi.U: the upper bound of the efficacy rate
   # mu1, mu2: parameters for phase I trial
   

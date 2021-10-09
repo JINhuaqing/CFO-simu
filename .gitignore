@@ -1,5 +1,6 @@
 .Rhistory
 .DS_Store
 *.swp
+*.swo
 Rcode_bak
 Rcode/*.RData

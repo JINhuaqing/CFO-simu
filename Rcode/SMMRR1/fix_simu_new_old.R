@@ -1,5 +1,5 @@
 # new simulation for MTD under fixed scinarios
-# Here I use optimal halfwidth for CRM 
+# I still use halfwidth of CRM is 0.05
 #setwd("../")
 setwd("../../Rcode/")
 #setwd("C:/Users/Dell/Documents/ProjectCode/phaseI/Rcode")
@@ -27,9 +27,9 @@ p.trues[[4]] <- c(0.01, 0.02, 0.03, 0.33, 0.50)
 p.trues[[5]] <- c(0.00, 0.00, 0.05, 0.10, 0.33) 
 p.trues[[6]] <- c(0.45, 0.55, 0.65, 0.75, 0.85)
 
-idx <- 4
+idx <- 6
 for (idx in c(6)){
-p.prior <- getprior(0.06, 0.33, 3, 5)
+p.prior <- getprior(0.05, 0.33, 3, 5)
 p.true <- p.trues[[idx]]
 tmtd <- MTD.level(target, p.true)
 
@@ -61,7 +61,7 @@ run.fn <- function(i){
 seeds <- 1:nsimu
 
 results <- mclapply(1:nsimu, run.fn, mc.cores=45)
-file.name <- paste0("../results/SMMR-R1/", "MTDSimuNew", nsimu, "fix_",  idx, ".RData")
+file.name <- paste0("../results/SMMR-R1/", "MTDSimuNewOld", nsimu, "fix_",  idx, ".RData")
 save(results, file=file.name)
 
 crm.ress <- lapply(1:nsimu, function(i)results[[i]]$crm)
