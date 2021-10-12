@@ -1,4 +1,5 @@
 # The new simulation for MTD under random 
+# I use the original results
 setwd("../")
 library(magrittr)
 library(parallel)

@@ -9,10 +9,10 @@ phi <- 0.30
 phiE <- 0.30
 cohortsize = 3 # cohort size
 ncohort = 20 # number of cohorts
-nsim <- 5000
+nsim <- 10000
 ncore <- 40
 ndose <- 5
-mu1 <- 0.52
+mu1 <- 0.53
 mu2 <- mu1
 seeds <- 1:nsim
 

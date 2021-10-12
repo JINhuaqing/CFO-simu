@@ -3,11 +3,18 @@ setwd("/home/r6user2/MyResearch/CFO/Rcode/")
 source("utilities.R")
 set.seed(1)
 
+
+# Target = 0.3
+# dose 5, mu1=mu2=0.23, 0.05
+# dose 5, mu1=mu2=0.38, 0.07 
+# dose 5, mu1=mu2=0.53, 0.1
+# dose 5, mu1=mu2=0.71, 0.15
+
 phi <- 0.30 # target DLT rate
 phiE <- 0.30 # the minimal acceptable efficate rate
 phiE.U <- 0.80 # The upper bound of the efficacy rate
 ndose <- 5
-mu1 = mu2 = 0.52  # Delta is 0.1 for ndose = 5
+mu1 = mu2 = 0.71  # Delta is 0.1 for ndose = 5
 nsim <- 100
 
 f.Name.um <- paste0("../results/SMMR-R1/phase12_rc_umbrella_nsim", nsim, "_ndose", ndose, "_phi", phi*100, "_phiE", phiE*100, "_mu", mu1*100, ".RData")
