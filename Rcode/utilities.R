@@ -468,6 +468,26 @@ gen.rand.doses.plateau <- function(ndose, phi, psi, psi.U, mu1, mu2){
     res
 }
 
+# with xxx.U, generate sc such that has maximal utils in OBD for STEIN
+gen.rand.doses.plateau.U<- function(ndose, phi, psi, psi.U, mu1, mu2){
+    flag <- FALSE
+    while (!flag) {
+        sc <- gen.rand.doses.plateau(ndose, phi, psi, psi.U, mu1, mu2)
+        u<-sc$qs-0.33*sc$ps-1.09*(sc$ps>phi) 	
+        flag <- sc$k.OBD == which.max(u)
+    }
+    sc
+}
+
+gen.rand.doses.umbrella.U <- function(ndose, phi, psi, psi.U, mu1, mu2){
+    flag <- FALSE
+    while (!flag) {
+        sc <- gen.rand.doses.umbrella(ndose, phi, psi, psi.U, mu1, mu2)
+        u<-sc$qs-0.33*sc$ps-1.09*(sc$ps>phi) 	
+        flag <- sc$k.OBD == which.max(u)
+    }
+    sc
+}
 gen.rand.doses.umbrella <- function(ndose, phi, psi, psi.U, mu1, mu2){
   # args:
   # ndose: number of dose levels
@@ -506,10 +526,17 @@ gen.rand.doses.umbrella <- function(ndose, phi, psi, psi.U, mu1, mu2){
 
 ## Below, the three functions are used for processing results under random scenarios for phase I/II trials
 phase12.post.process.single <- function(res){
+
     ndose <- length(res$p.true)
+    
+    #us<- res$pE.true-0.33*res$p.true-1.09*(res$p.true>res$target) 	
+    #U.OBD <- which.max(us)
+
     rv <- rep(0, 9)
     rv[1] <- sum(res$OBD==res$k.OBD) # OBD sel
     rv[2] <- res$dose.ns[res$k.OBD] # OBD allo
+    #rv[10] <- sum(res$OBD==U.OBD) # U.OBD sel
+    #rv[11] <- res$dose.ns[U.OBD] # U.OBD allo
     if (res$OBD== 99){ # over sel
         rv[3] <- 0
     }else{
@@ -544,7 +571,9 @@ phase12.post.process.random <- function(results){
     res.all.df <- data.frame(t(res.all))
     final.res <- transmute(res.all.df, 
                            OBD.Sel=OBD.Sel/nsimu,
+                           #UOBD.Sel=UOBD.Sel/nsimu,
                            OBD.Allo=OBD.Allo/No.Subject,
+                           #UOBD.Allo=UOBD.Allo/No.Subject,
                            Over.Sel=Over.Sel/nsimu,
                            Over.Allo=Over.Allo/No.Subject,
                            GBD.Sel = GBD.Sel/nsimu, 

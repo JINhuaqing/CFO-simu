@@ -1,3 +1,4 @@
+source("./ORM_utils.R")
 ## Optimal benchmark 
 
 gen.comp.info.fn <- function(N, ps){
@@ -18,18 +19,21 @@ gen.comp.info.fn <- function(N, ps){
 
 
 # phase I
-phaseI.opt.simu.fn <- function(nsim, N, phi, p.true, non.sel=0.1){
+phaseI.opt.simu.fn <- function(nsim, N, phi, p.true){
     ## args:
     ##  nsim: num of simulation times
     ##  N: num of subjects
     ##  phi: target DLT rate
-    ##  non.sel: the difference for non selection
     
     K <- length(p.true)
     MTD.sels <- rep(0, K+1)
     for (i in 1:nsim){
-        ps.hat <- gen.comp.info.fn(N, p.true)$ps.hat
-        if (ps.hat[1] > phi + non.sel){
+        res <- gen.comp.info.fn(N, p.true)
+        ps.hat <- res$ps.hat
+        y <- colSums(res$sps)[1]
+        add.args <- list(alp.prior=phi, bet.prior=1-phi, y=y, n=N)
+        if (overdose.fn(phi, add.args)){
+        #if (ps.hat[1] > phi + non.sel){
             MTD <- K+1
         }else{
             MTD <- which.min(abs(ps.hat-phi))
@@ -42,20 +46,23 @@ phaseI.opt.simu.fn <- function(nsim, N, phi, p.true, non.sel=0.1){
 }
 
 
-phase12.opt.simu.fn <- function(nsim, N, phi, phiE, p.true, pE.true, non.sel=0.1){
+phase12.opt.simu.fn <- function(nsim, N, phi, phiE, p.true, pE.true){
     ## args:
     ##  nsim: num of simulation times
     ##  N: num of subjects
     ##  phi: target DLT rate
     ##  phiE: minimal eff rate
-    ##  non.sel: the difference for non selection
     
     K <- length(p.true)
     OBD.sels <- rep(0, K+1)
     for (i in 1:nsim){
-        ps.hat <- gen.comp.info.fn(N, p.true)$ps.hat
+        res <- gen.comp.info.fn(N, p.true)
+        ps.hat <- res$ps.hat
+        y <- colSums(res$sps)[1]
+        add.args <- list(alp.prior=phi, bet.prior=1-phi, y=y, n=N)
         psE.hat <- gen.comp.info.fn(N, pE.true)$ps.hat
-        if (ps.hat[1] > phi + non.sel){
+        if (overdose.fn(phi, add.args)){
+        #if (ps.hat[1] > phi + non.sel){
             OBD <- K+1
         }else{
             MTD <- which.min(abs(ps.hat-phi))

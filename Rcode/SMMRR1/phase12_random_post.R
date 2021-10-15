@@ -18,13 +18,13 @@ ndose <- 5
 # dose 5, mu1=mu2=0.38, 0.07 
 # dose 5, mu1=mu2=0.53, 0.1
 # dose 5, mu1=mu2=0.71, 0.15
-mu1 <- 0.23
-typ <- "um"
+mu1 <- 0.38
+typ <- "pl"
 mu2 <- mu1
 
 # random scenario results
 prefix <- paste0("../results/SMMR-R1/phase12_", typ)
-save.f.Name.STEIN <- paste0(prefix, "_STEIN_nsim", nsim, "_ndose", ndose, "_phi", 
+save.f.Name.STEIN <- paste0(prefix, "_STEIN2_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 save.f.Name.CFO <- paste0(prefix, "_CFO_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")

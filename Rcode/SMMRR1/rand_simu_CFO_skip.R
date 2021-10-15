@@ -1,4 +1,5 @@
 # compare CFO and CFO allowing dose skipping
+# I adopt CFO allowing dose skipping finally
 setwd("/home/r6user2/MyResearch/CFO/Rcode/")
 source("phaseI_II/ORM_eff_utils.R")
 source("SMMRR1/ORMConv_eff_utils.R")

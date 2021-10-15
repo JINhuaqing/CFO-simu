@@ -3,7 +3,7 @@ source("SMMRR1/WT_utils.R")
 source("SMMRR1/MADA_utils.R")
 source("SMMRR1/STEIN_single_utils.R")
 source("phaseI_II/ORM_eff_utils.R")
-source("SMMRR1/ORMConv_eff_utils.R")
+source("SMMRR1/CFO_effTox_utils.R")
 source("utilities.R")
 library(parallel)
 
@@ -109,7 +109,7 @@ run.fn.CFO2 <- function(k){
 }
 
 prefix <- paste0("../results/SMMR-R1/phase12_", typ)
-save.f.Name.STEIN <- paste0(prefix, "_STEIN_nsim", nsim, "_ndose", ndose, "_phi", 
+save.f.Name.STEIN <- paste0(prefix, "_STEIN2_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 save.f.Name.CFO <- paste0(prefix, "_CFO_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
@@ -120,16 +120,16 @@ save.f.Name.WT <- paste0(prefix, "_WT_nsim", nsim, "_ndose", ndose, "_phi",
 save.f.Name.MADA <- paste0(prefix, "_MADA_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_mu", mu1*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 
-# ress.STEIN <- mclapply(1:nsim, run.fn.STEIN, mc.cores=ncore)
-# save(ress.STEIN, file=save.f.Name.STEIN)
+ress.STEIN <- mclapply(1:nsim, run.fn.STEIN, mc.cores=ncore)
+save(ress.STEIN, file=save.f.Name.STEIN)
 # ress.WT <-    mclapply(1:nsim, run.fn.WT, mc.cores=ncore)
 # save(ress.WT, file=save.f.Name.WT)
 # ress.MADA <-  mclapply(1:nsim, run.fn.MADA, mc.cores=ncore)
 # save(ress.MADA, file=save.f.Name.MADA)
 # ress.CFO <-   mclapply(1:nsim, run.fn.CFO, mc.cores=ncore)
 # save(ress.CFO, file=save.f.Name.CFO)
-ress.CFO2 <-  mclapply(1:nsim, run.fn.CFO2, mc.cores=ncore)
-save(ress.CFO2, file=save.f.Name.CFO2)
+# ress.CFO2 <-  mclapply(1:nsim, run.fn.CFO2, mc.cores=ncore)
+# save(ress.CFO2, file=save.f.Name.CFO2)
 
 #phase12.post.process.random.all(ress.WT, ress.STEIN, ress.MADA, 
 #                                ress.CFO, ress.CFO2, 

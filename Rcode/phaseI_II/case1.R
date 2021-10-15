@@ -12,18 +12,11 @@ ncore <- 10
 
 # plateau
 plateaus <- list()
-plateaus[[1]] <- list(p.true=c(0.05, 0.1, 0.2, 0.3, 0.35),
+plateaus[[1]] <- list(p.true=c(0.05, 0.1, 0.3, 0.5, 0.6),
                       pE.true=c(0.2, 0.3, 0.5, 0.5, 0.5))
-plateaus[[2]] <- list(p.true=c(0.05, 0.1, 0.3, 0.5, 0.6),
-                      pE.true=c(0.2, 0.3, 0.5, 0.5, 0.5))
-plateaus[[3]] <- list(p.true=c(0.05, 0.1, 0.3, 0.5, 0.6),
-                      pE.true=c(0.1, 0.2, 0.6, 0.6, 0.6))
-plateaus[[4]] <- list(p.true=c(0.15, 0.25, 0.3, 0.35, 0.4),
+plateaus[[2]] <- list(p.true=c(0.15, 0.25, 0.3, 0.35, 0.4),
                       pE.true=c(0.2, 0.5, 0.5, 0.5, 0.5))
-plateaus[[5]] <- list(p.true=c(0.15, 0.2, 0.3, 0.35, 0.4),
-                      pE.true=c(0.2, 0.5, 0.5, 0.5, 0.5))
-# 2, 4 
-idx <- 4
+idx <- 1
 p.true <- plateaus[[idx]]$p.true
 pE.true <- plateaus[[idx]]$pE.true
 

@@ -22,9 +22,7 @@ make.move.fn <- function(ps, m=10){
 }
 
 
-under.eff.fn <- function(phiE, add.args=list())
-    {
-    args <- c(list(phi=phiE), add.args)
+under.eff.fn <- function(phiE, add.args=list()){
     x <- add.args$x
     n <- add.args$n
     alp.prior <- add.args$alp.prior.eff

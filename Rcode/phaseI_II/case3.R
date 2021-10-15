@@ -14,13 +14,6 @@ ncore <- 20
 increas <- list()
 increas[[1]] <- list(p.true=c(0.05, 0.07, 0.1, 0.12, 0.16),
                       pE.true=c(0.35, 0.45, 0.5, 0.55, 0.75))
-increas[[2]] <- list(p.true=c(0.03, 0.16, 0.27, 0.45, 0.55),
-                      pE.true=c(0.15, 0.38, 0.45, 0.6, 0.7))
-increas[[3]] <- list(p.true=c(0.03, 0.22, 0.30, 0.45, 0.55),
-                      pE.true=c(0.15, 0.30, 0.45, 0.6, 0.7))
-increas[[4]] <- list(p.true=c(0.10, 0.30, 0.35, 0.45, 0.55),
-                      pE.true=c(0.25, 0.40, 0.45, 0.6, 0.7))
-# 1
 idx <- 1
 p.true <- increas[[idx]]$p.true
 pE.true <- increas[[idx]]$pE.true

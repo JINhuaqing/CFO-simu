@@ -1,4 +1,5 @@
 # The new simulation for MTD under random 
+# the diff is that for CRM, I use getprior with halfwidth 0.06
 # I use the original results
 setwd("../")
 library(magrittr)

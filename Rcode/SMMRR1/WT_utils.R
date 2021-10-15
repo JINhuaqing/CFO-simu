@@ -120,8 +120,8 @@ post.eff<-function(b,q,z,n){
     {
 	# generate data for a new cohort of patients
 	
-		y[comb.curr] = y[comb.curr] + rbinom(1,cohortsize,p0[comb.curr]);
 		z[comb.curr] = z[comb.curr] + rbinom(1,cohortsize,q0[comb.curr]);
+		y[comb.curr] = y[comb.curr] + rbinom(1,cohortsize,p0[comb.curr]);
 		n[comb.curr] = n[comb.curr] + cohortsize;
 
 		

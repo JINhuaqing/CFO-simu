@@ -164,7 +164,8 @@ STEIN.simu.fn <- function(target, pE.true, pT.true,  psi1,  psi2, ncohort, cohor
         pT[n==0]<-20
         pE[n==0]<-0
         pE[elimi==1]<-0
-        u<-pE-0.33*pT-1.09*(pT>target) 	
+        u<-pE-100*(pT>target) 	 # I use this utility to make comparison fari
+        #u<-pE-0.33*pT-1.09*(pT>target) 	
         d_opt<-which.max(u)	
         OBD=d_opt
     } else {
