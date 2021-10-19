@@ -36,7 +36,7 @@ scs[[7]] <- list(p.true=c(0.40, 0.5, 0.55, 0.6, 0.7),
                  pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
 
 
-idx <- 6
+idx <- 3
 
 p.true <- scs[[idx]]$p.true
 pE.true <- scs[[idx]]$pE.true
@@ -104,23 +104,23 @@ save.f.Name.WT <- paste0(prefix, "_WT_nsim", nsim, "_ndose", ndose, "_phi",
 save.f.Name.MADA <- paste0(prefix, "_MADA_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 
-#ress.STEIN <- mclapply(1:nsim, run.fn.STEIN, mc.cores=ncore)
+ress.STEIN <- mclapply(1:nsim, run.fn.STEIN, mc.cores=ncore)
 #save(ress.STEIN, file=save.f.Name.STEIN)
-ress.WT <-    mclapply(1:nsim, run.fn.WT, mc.cores=ncore)
+#ress.WT <-    mclapply(1:nsim, run.fn.WT, mc.cores=ncore)
 #save(ress.WT, file=save.f.Name.WT)
 #ress.MADA <-  mclapply(1:nsim, run.fn.MADA, mc.cores=ncore)
 #save(ress.MADA, file=save.f.Name.MADA)
 # ress.CFO <-   mclapply(1:nsim, run.fn.CFO, mc.cores=ncore)
 
-sum.res.WT <- phase12.post.fn(ress.WT)
-#sum.res.STEIN <- phase12.post.fn(ress.STEIN)
+#sum.res.WT <- phase12.post.fn(ress.WT)
+sum.res.STEIN <- phase12.post.fn(ress.STEIN)
 
 sum.all <- list(
 #CFO=sum.res.CFO ,
 #CFO2=sum.res.CFO2,
 #MADA=sum.res.MADA,
-WT=sum.res.WT)
-#STEIN=sum.res.STEIN)
+STEIN=sum.res.STEIN)
+#WT=sum.res.WT)
 
 print(OBD.level(phi, phiE, p.true, pE.true))
 print(phase.I.II.pretty.tb(sum.all))

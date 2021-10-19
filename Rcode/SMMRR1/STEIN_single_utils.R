@@ -97,10 +97,10 @@ STEIN.simu.fn <- function(target, pE.true, pT.true,  psi1,  psi2, ncohort, cohor
     for(i in 1:ncohort)  
     {  			
         ### generate toxicity outcome
-        wT = sum(runif(cohortsize)<pT.true[d])
-        yT[d] = yT[d] + wT;
         wE = sum(runif(cohortsize)<pE.true[d])
         yE[d] = yE[d] + wE;
+        wT = sum(runif(cohortsize)<pT.true[d])
+        yT[d] = yT[d] + wT;
         n[d] = n[d] + cohortsize;
         nc = n[d]/cohortsize;
         if(!is.na(b.elim[nc]))
@@ -164,7 +164,7 @@ STEIN.simu.fn <- function(target, pE.true, pT.true,  psi1,  psi2, ncohort, cohor
         pT[n==0]<-20
         pE[n==0]<-0
         pE[elimi==1]<-0
-        u<-pE-100*(pT>target) 	 # I use this utility to make comparison fari
+        u<-pE-100*(pT>target) 	 # I use this utility to make comparison fair
         #u<-pE-0.33*pT-1.09*(pT>target) 	
         d_opt<-which.max(u)	
         OBD=d_opt

@@ -78,8 +78,8 @@ phase.I.II.pretty.tb <- function(sum.all){
     rownames(tb.df) <- names(sum.all)
     names(tb.df) <- paste0("Level ", 1:ndose)
     
-    tb.df["nTox"] <- round(tox.nums, 1)
-    tb.df["nEff"] <- round(eff.nums, 1)
+    tb.df["PerTox"] <- round(100*tox.nums/sub.nums, 1)
+    tb.df["PerEff"] <- round(100*eff.nums/sub.nums, 1)
     tb.df["nSub"] <- round(sub.nums, 1)
     tb.df["NonSel.rate"] <- round(errStops, 1)
     tb.df

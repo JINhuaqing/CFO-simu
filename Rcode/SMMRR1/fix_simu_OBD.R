@@ -16,7 +16,6 @@ ncohort = 20 # number of cohorts
 nsim <- 5000
 ncore <- 40
 ndose <- 5
-set.seed(2021)
 seeds <- 1:nsim
 add.args <- list(alp.prior=phi, bet.prior=1-phi, alp.prior.eff=0.5, bet.prior.eff=1-0.5)
 
@@ -37,7 +36,7 @@ scs[[7]] <- list(p.true=c(0.40, 0.5, 0.55, 0.6, 0.7),
                  pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
 
 
-for (idx in c(1:5, 7)){
+for (idx in c(1:6, 7)){
 
 p.true <- scs[[idx]]$p.true
 pE.true <- scs[[idx]]$pE.true
@@ -82,27 +81,27 @@ run.fn.CFO2 <- function(k){
     res
 }
 
-prefix <- paste0("../results/SMMR-R1/test/phase12_Fixed_", idx)
-save.f.Name.STEIN <- paste0(prefix, "_STEIN_nsim", nsim, "_ndose", ndose, "_phi", 
+prefix <- paste0("../results/SMMR-R1/phase12_Fixed_", idx)
+save.f.Name.CFO2 <- paste0(prefix, "_CFO2_nsim", nsim, "_ndose", ndose, "_phi", 
+         phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
+save.f.Name.STEIN <- paste0(prefix, "_STEIN2_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 save.f.Name.CFO <- paste0(prefix, "_CFO_nsim", nsim, "_ndose", ndose, "_phi", 
-         phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
-save.f.Name.CFO2 <- paste0(prefix, "_CFO2_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 save.f.Name.WT <- paste0(prefix, "_WT_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 save.f.Name.MADA <- paste0(prefix, "_MADA_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 
-ress.WT <-    mclapply(1:nsim, run.fn.WT, mc.cores=ncore)
-save(ress.WT, file=save.f.Name.WT)
-# ress.STEIN <- mclapply(1:nsim, run.fn.STEIN, mc.cores=ncore)
-# save(ress.STEIN, file=save.f.Name.STEIN)
+#ress.WT <-    mclapply(1:nsim, run.fn.WT, mc.cores=ncore)
+#save(ress.WT, file=save.f.Name.WT)
+ress.STEIN <- mclapply(1:nsim, run.fn.STEIN, mc.cores=ncore)
+save(ress.STEIN, file=save.f.Name.STEIN)
 # ress.MADA <-  mclapply(1:nsim, run.fn.MADA, mc.cores=ncore)
 # save(ress.MADA, file=save.f.Name.MADA)
 # ress.CFO <-   mclapply(1:nsim, run.fn.CFO, mc.cores=ncore)
 # save(ress.CFO, file=save.f.Name.CFO)
-# ress.CFO2 <-  mclapply(1:nsim, run.fn.CFO2, mc.cores=ncore)
-# save(ress.CFO2, file=save.f.Name.CFO2)
+#ress.CFO2 <-  mclapply(1:nsim, run.fn.CFO2, mc.cores=ncore)
+#save(ress.CFO2, file=save.f.Name.CFO2)
 # 
 }

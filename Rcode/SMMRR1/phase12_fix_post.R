@@ -24,11 +24,11 @@ scs[[6]] <- list(p.true=c(0.25, 0.40, 0.5, 0.55, 0.6),
                 pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
 scs[[7]] <- list(p.true=c(0.40, 0.5, 0.55, 0.6, 0.7),
                  pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
-idx <- 2 # 5, 7
+idx <- 7 # 5, 7
 p.true <- scs[[idx]]$p.true
 pE.true <- scs[[idx]]$pE.true
 prefix <- paste0("../results/SMMR-R1/phase12_Fixed_", idx)
-save.f.Name.STEIN <- paste0(prefix, "_STEIN_nsim", nsim, "_ndose", ndose, "_phi", 
+save.f.Name.STEIN <- paste0(prefix, "_STEIN2_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
 save.f.Name.CFO <- paste0(prefix, "_CFO_nsim", nsim, "_ndose", ndose, "_phi", 
          phi*100, "_phiE", phiE*100, "_ncoh", ncohort, "_cohSize", cohortsize, ".RData")
@@ -52,13 +52,14 @@ sum.res.WT <- phase12.post.fn(ress.WT)
 sum.res.STEIN <- phase12.post.fn(ress.STEIN)
 
 sum.all <- list(
-CFO=sum.res.CFO ,
+#CFO=sum.res.CFO ,
 CFO2=sum.res.CFO2,
 MADA=sum.res.MADA,
-WT=sum.res.WT,
-STEIN=sum.res.STEIN)
+STEIN=sum.res.STEIN,
+WT=sum.res.WT
+)
 
 print(OBD.level(phi, phiE, p.true, pE.true))
-phase.I.II.pretty.tb(sum.all)
+phase.I.II.pretty.tb(sum.all)[, -8]
 
 
