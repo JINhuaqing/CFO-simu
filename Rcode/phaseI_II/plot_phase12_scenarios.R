@@ -1,4 +1,4 @@
-setwd("C:/Users/Dell/Documents/ProjectCode/phaseI")
+setwd("C:/Users/JINHU/Documents/ProjectCode/CFO/Rcode")
 phaseI_II.scenario.plot.fn <- function(p.true, pE.true, main="Plateau", OBD=NULL){
     ndose <- length(p.true)
     lvls <- 1:ndose
@@ -34,7 +34,7 @@ scenarios[[4]] <- list(p.true=c(0.05, 0.15, 0.25, 0.40, 0.45),
 scenarios[[5]] <- list(p.true=c(0.05, 0.07, 0.1, 0.12, 0.16),
                      pE.true=c(0.35, 0.45, 0.5, 0.55, 0.75))
 
-scenarios[[6]] <- list(p.true=c(0.25, 0.40, 0.5, 0.55, 0.6),
+scenarios[[6]] <- list(p.true=c(0.40, 0.5, 0.55, 0.6, 0.7),
                        pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
 # for (i in 1:6){
 #     sce <- scenarios[[i]]
@@ -45,7 +45,7 @@ scenarios[[6]] <- list(p.true=c(0.25, 0.40, 0.5, 0.55, 0.6),
 # }
 
 
-pdf("plots/eff_tox_sc6.pdf", width=6, height=8)
+pdf("../plots/SMMRR1/eff_tox_sc6new.pdf", width=6, height=8)
 de.par <- par()
 mat <- matrix(c(1, 2, 3, 4, 5, 6, 7, 7), nrow=4, byrow=TRUE)
 layout(mat=mat, heights=c(0.5, 0.5, 0.5, 0.2))

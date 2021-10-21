@@ -161,26 +161,68 @@ optim.gamma.fn <- function(n1, n2, phi, type, alp.prior, bet.prior){
 
 make.decision.ORM.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.doses, diag=FALSE){
     if (cover.doses[2] == 1){
-        return(1)
+        if (!diag){
+            res <- 1
+        }else{
+            res <- list(
+                gam2=NA,
+                gam1=NA,
+                OR.v2=NA,
+                OR.v1=NA,
+                cidx=1
+            )
+        }
     }else{
         if (is.na(cys[1]) & (cover.doses[3]==1)){
-            return(2)
+            if (!diag){
+                res <- 2
+            }else{
+                res <- list(
+                    gam2=NA,
+                    gam1=NA,
+                    OR.v2=NA,
+                    OR.v1=NA,
+                    cidx=2
+                )
+            }
         }else  if (is.na(cys[1]) & (!(cover.doses[3]==1))){
            gam2 <- optim.gamma.fn(cns[2], cns[3], phi, "R", alp.prior, bet.prior)$gamma 
            OR.v2 <- OR.values(phi, cys[2], cns[2], cys[3], cns[3], alp.prior, bet.prior, type="R")
            if (OR.v2>gam2){
-               return(3)
+               cidx <- 3
            }else{
-               return(2)
+               cidx <- 2
            }
+            if (!diag){
+                res <- cidx
+            }else{
+                res <- list(
+                    gam2=gam2,
+                    gam1=NA,
+                    OR.v2=OR.v2,
+                    OR.v1=NA,
+                    cidx=cidx
+                )
+            }
         }else  if (is.na(cys[3]) | (cover.doses[3]==1)){
            gam1 <- optim.gamma.fn(cns[1], cns[2], phi, "L", alp.prior, bet.prior)$gamma 
            OR.v1 <- OR.values(phi, cys[1], cns[1], cys[2], cns[2], alp.prior, bet.prior, type="L")
            if (OR.v1>gam1){
-               return(1)
+               cidx <- 1
            }else{
-               return(2)
+               cidx <- 2
            }
+            if (!diag){
+                res <- cidx
+            }else{
+                res <- list(
+                    gam2=NA,
+                    gam1=gam1,
+                    OR.v2=NA,
+                    OR.v1=OR.v1,
+                    cidx=cidx
+                )
+            }
             
         }else  if (!(is.na(cys[1]) | is.na(cys[3]) | cover.doses[3]==1)){
            gam1 <- optim.gamma.fn(cns[1], cns[2], phi, "L", alp.prior, bet.prior)$gamma 
@@ -190,14 +232,27 @@ make.decision.ORM.fn <- function(phi, cys, cns, alp.prior, bet.prior, cover.dose
            v1 <- OR.v1 > gam1
            v2 <- OR.v2 > gam2
            if (v1 & !v2){
-               return(1)
+               cidx <- 1
            }else if (!v1 & v2){
-               return(3)
+               cidx <- 3
            }else{
-               return(2)
+               cidx <- 2
            }
+            if (!diag){
+                res <- cidx
+            }else{
+                res <- list(
+                    gam2=gam2,
+                    gam1=gam1,
+                    OR.v2=OR.v2,
+                    OR.v1=OR.v1,
+                    cidx=cidx
+                )
+            }
         }
     }
+    
+    return(res)
 }
 
 overdose.fn <- function(phi, add.args=list()){
