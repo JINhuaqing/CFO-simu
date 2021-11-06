@@ -27,6 +27,7 @@ phaseI.opt.simu.fn <- function(nsim, N, phi, p.true){
     
     K <- length(p.true)
     MTD.sels <- rep(0, K+1)
+    DLT.num <- 0
     for (i in 1:nsim){
         res <- gen.comp.info.fn(N, p.true)
         ps.hat <- res$ps.hat
@@ -39,10 +40,15 @@ phaseI.opt.simu.fn <- function(nsim, N, phi, p.true){
             MTD <- which.min(abs(ps.hat-phi))
         }
         MTD.sels[MTD] <- MTD.sels[MTD]+1
+        DLT.num <- DLT.num + sum(res$sps)
     }
     MTD.sels.rate <- 100*(MTD.sels/nsim)
     names(MTD.sels.rate) <- c(1:K, "non.sel")
-    MTD.sels.rate
+    DLT.rate <- DLT.num/N/nsim/K * 100
+    res <- c(MTD.sels.rate, DLT.rate)
+    names(res) <- c(1:K, "non.sel", "DLT per")
+    res
+
 }
 
 

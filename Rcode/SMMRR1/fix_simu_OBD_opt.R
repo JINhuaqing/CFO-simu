@@ -38,6 +38,8 @@ scs[[7]] <- list(p.true=c(0.40, 0.5, 0.55, 0.6, 0.7),
                  pE.true=c(0.15, 0.25, 0.5, 0.5, 0.5))
 
 
+#sapply(scs, function(x) {100*c(mean(x$p.true), mean(x$pE.true))})
+
 idx <- 7
 
 p.true <- scs[[idx]]$p.true

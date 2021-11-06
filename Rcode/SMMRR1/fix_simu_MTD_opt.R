@@ -25,7 +25,9 @@ p.trues[[4]] <- c(0.01, 0.02, 0.03, 0.33, 0.50)
 p.trues[[5]] <- c(0.00, 0.00, 0.05, 0.10, 0.33) 
 p.trues[[6]] <- c(0.45, 0.55, 0.65, 0.75, 0.85)
 
-idx <- 6
+# sapply(p.trues, mean)
+
+idx <- 1
 p.true <- p.trues[[idx]]
 N <- ncohort * cohortsize
 set.seed(2021)
