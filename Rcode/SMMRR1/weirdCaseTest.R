@@ -57,20 +57,51 @@ get.all.cases <- function(ORsL, ORsR, gamL, gamR){
 phi <- 0.3
 alp.prior <- phi
 bet.prior <- 1-phi
-mL <- 3
-mC <- 3
-mR <- 0
-xL <- 0
-xC <- 3
-xR <- 0
-ORL <- OR.values(phi, xL, mL, xC, mC, alp.prior, bet.prior, type="L");ORL
-optim.gamma.fn(mL, mC, phi, type="L", alp.prior, bet.prior)
+alp.prior.eff <- 0.5
+bet.prior.eff <- 0.5
+# (NA, 1, 0)
+optim.gamma.fn(1, 0, phi, type="R", alp.prior, bet.prior)
+ORR <- OR.values(phi, 0, 1, 0, 0, alp.prior, bet.prior, type="R");ORR
+ORR <- OR.values(phi, 1, 1, 0, 0, alp.prior, bet.prior, type="R");ORR
+ORM.Eff.move.probs(c(0, 0), c(1, 0), alp.prior.eff, bet.prior.eff)
+ORM.Eff.move.probs(c(1, 0), c(1, 0), alp.prior.eff, bet.prior.eff)
 
-ORR <- OR.values(phi, xC, mC, xR, mR, alp.prior, bet.prior, type="R");ORR
-optim.gamma.fn(mC, mR, phi, type="R", alp.prior, bet.prior)
+# (1, 1, 0)
+optim.gamma.fn(1, 1, phi, type="L", alp.prior, bet.prior)
+optim.gamma.fn(1, 0, phi, type="R", alp.prior, bet.prior)
+
+OR.values(phi, 0, 1, 0, 1, alp.prior, bet.prior, type="L")
+OR.values(phi, 0, 1, 0, 0, alp.prior, bet.prior, type="R")
+ORM.Eff.move.probs(c(0, 0, 0), c(1, 1, 0), alp.prior.eff, bet.prior.eff)
+ORM.Eff.move.probs(c(0, 1, 0), c(1, 1, 0), alp.prior.eff, bet.prior.eff)
+
+OR.values(phi, 0, 1, 1, 1, alp.prior, bet.prior, type="L")
+OR.values(phi, 1, 1, 0, 0, alp.prior, bet.prior, type="R")
+ORM.Eff.move.probs(c(0, 0, 0), c(1, 1, 0), alp.prior.eff, bet.prior.eff)
+ORM.Eff.move.probs(c(0, 1, 0), c(1, 1, 0), alp.prior.eff, bet.prior.eff)
+
+
+OR.values(phi, 0, 3, 2, 3, alp.prior, bet.prior, type="L")
+OR.values(phi, 2, 3, 0, 0, alp.prior, bet.prior, type="R")
+OR.values(phi, 3, 3, 0, 0, alp.prior, bet.prior, type="R")
+OR.values(phi, 0, 3, 1, 3, alp.prior, bet.prior, type="L")
+OR.values(phi, 0, 3, 2, 3, alp.prior, bet.prior, type="L")
+OR.values(phi, 0, 3, 3, 3, alp.prior, bet.prior, type="L")
+ORM.Eff.move.probs(c(0, 0), c(3, 0), alp.prior.eff, bet.prior.eff)
+ORM.Eff.move.probs(c(1, 0), c(3, 0), alp.prior.eff, bet.prior.eff)
+ORM.Eff.move.probs(c(2, 0), c(3, 0), alp.prior.eff, bet.prior.eff)
+ORM.Eff.move.probs(c(3, 0), c(3, 0), alp.prior.eff, bet.prior.eff)
+
+
+ORL <- OR.values(phi, xL, mL, xC, mC, alp.prior, bet.prior, type="L");ORL
+optim.gamma.fn(0, mC, phi, type="L", alp.prior, bet.prior)
+
 
   ORL <- OR.values(phi, 1, 3, 3, 9, alp.prior, bet.prior, type="L");ORL
 optim.gamma.fn(nL, nC, phi, type="L", alp.prior, bet.prior)
 optim.gamma.fn(nC, nR, phi, type="R", alp.prior, bet.prior)
 
+
+
+make.decision.ORM.fn(0.2, c(0, 1, 0), c(1, 1, 0), alp.prior, bet.prior, c(0, 0, 0))
 

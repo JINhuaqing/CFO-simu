@@ -215,14 +215,14 @@ dose.y.tox <- rep(res$dose.seq, each=3) + 0.1
 dose.y.eff <- rep(res$dose.seq, each=3) - 0.1
 
 png(filename="../plots/SMMRR1/realdata.png", unit="in", height=5, width=8, res=300)
-plot(chts.x[toxs.Vec==1], dose.y.tox[toxs.Vec==1], pch=4, 
+plot(chts.x[toxs.Vec==1], dose.y.tox[toxs.Vec==1], pch=15, 
      ylim=c(0.5, 4.5), xlim=c(2, 38), xaxt="n", yaxt="n", 
      ylab="Dose level", xlab="Cohort index")
 points(chts.x[toxs.Vec==0], dose.y.tox[toxs.Vec==0], pch=0)
 points(chts.x[effs.Vec==1], dose.y.eff[effs.Vec==1], pch=1)
-points(chts.x[effs.Vec==0], dose.y.eff[effs.Vec==0], pch=15)
+points(chts.x[effs.Vec==0], dose.y.eff[effs.Vec==0], pch=16)
 axis(side=1, at=seq(2, 38, 2), label=1:19)
 axis(side=2, at=1:4, label=1:4)
 legend("bottomright", legend=c("Toxicity", "No toxicity", "Efficacy", "No efficacy"),
-       pch=c(4, 0, 1, 15), ncol=2)                      
+       pch=c(15, 0, 1, 16), ncol=2)                      
 dev.off()

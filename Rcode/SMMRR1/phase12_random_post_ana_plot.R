@@ -189,7 +189,7 @@ for (mu1 in c(0.23, 0.38, 0.53, 0.71)){
     res.cur <- res.both.all[[res.name]]
     if (mu1 == 0.23){
         plot(res.cur$OBD.Allo, type="b", ylim=c(0.25, 0.42), lty = 1, col=flag, pch=flag, lwd=2,
-             xlab = "", xaxt="n", ylab="OBD Allocation(%)")
+             xlab = "", xaxt="n", ylab="OBD Allocation (%)")
         axis(side=1, at=1:4, labels=rownames(res.cur))
     }else{
         lines(res.cur$OBD.Allo, type="b", lty=1, col=flag, pch=flag, lwd=2)
