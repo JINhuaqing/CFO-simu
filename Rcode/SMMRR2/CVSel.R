@@ -1,6 +1,8 @@
-setwd("C:/Users/JINHU/Documents/ProjectCode/CFO/Rcode")
+#setwd("C:/Users/JINHU/Documents/ProjectCode/CFO/Rcode")
+setwd("/home/r5user5/MyResearch/CFO-simu/Rcode/")
 source("utilities.R")
 source("ORM_utils.R")
+library(parallel)
 
 
 gen.rand.overdoses <- function(ndose, target, delta=0.1, mu2=0.55, inv.fn=qnorm, fn=pnorm){
@@ -68,27 +70,31 @@ gen.rand.overdoses.phase12 <- function(ndose, phi, psi, delta=0.1, psi.U=0.8, mu
 }
 
 
-target <- 0.33
+target <- 0.25
 ndose <- 5
 
 ncohort <- 10
 cohortsize <- 3
+mu <- 0.5
 
 add.args <- list(alp.prior=target, bet.prior=1-target)
 
-mu <- 0.69
 run.fn <- function(k){
     set.seed(seeds[k])
     print(k)
     
-    p.true <- gen.rand.overdoses(ndose, target, mu2=0.3)
+    p.true <- gen.rand.overdoses(ndose, target, mu2=mu, delta=0.20)
+    tmtd <- 99
+    #p.true.all <- gen.rand.doses(ndose, target, mu1=mu, mu2=mu)
+    #p.true <- p.true.all$p.true
+    #tmtd <- p.true.all$mtd.level
     
     orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
     
     ress <- list(
         orm=orm.res,
         paras=list(p.true=p.true, 
-                   mtd=99, 
+                   mtd=tmtd, 
                    add.args=add.args,
                    target=target,
                    ncohort=ncohort,
@@ -101,6 +107,6 @@ run.fn <- function(k){
 nsimu <- 10000
 seeds <- 1:nsimu
 file.name <- paste0("../results/SMMR-R2/", "MTDOverDose", nsimu, ".RData")
-results <- mclapply(1:nsimu, run.fn, mc.cores=15)
+results <- mclapply(1:nsimu, run.fn, mc.cores=80)
 post.process.random(results)
 save(results, file=file.name)

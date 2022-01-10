@@ -281,13 +281,15 @@ post.process.onemethod <- function(res, paras){
     rv[5] <- sum((sum(res$DLT.ns)/sum(res$dose.ns))>target)
     rv[6] <- sum(res$DLT.ns)
     rv[7] <- sum(res$dose.ns)
+    rv[8] <- sum(res$MTD==99)
     names(rv) <- c(
         "MTD Sel", "MTD Allo", "Over Sel", 
         "Over Allo", "Risk of HT", "No DLT",
-        "No Subject")
+        "No Subject", "Non Sel")
     rv
     
 }
+
 post.process.single <- function(result){
     nMethod <- length(result)-1
     paras <- result$paras
@@ -314,7 +316,8 @@ post.process.random <- function(results){
                            Over.Sel=Over.Sel/nsimu,
                            Over.Allo=Over.Allo/No.Subject,
                            Risk.of.HT=Risk.of.HT/nsimu,
-                           PerDLT=No.DLT/No.Subject
+                           PerDLT=No.DLT/No.Subject,
+                           Non.Sel=Non.Sel/nsimu
     )
     rownames(final.res) <- rownames(res.all.df)
     final.res
