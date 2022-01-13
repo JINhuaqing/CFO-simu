@@ -82,19 +82,12 @@ add.args <- list(alp.prior=target, bet.prior=1-target)
 run.fn <- function(k){
     set.seed(seeds[k])
     print(k)
-    
     p.true <- gen.rand.overdoses(ndose, target, mu2=mu, delta=0.20)
-    tmtd <- 99
-    #p.true.all <- gen.rand.doses(ndose, target, mu1=mu, mu2=mu)
-    #p.true <- p.true.all$p.true
-    #tmtd <- p.true.all$mtd.level
-    
     orm.res <- ORM.simu.fn(target, p.true, ncohort=ncohort, cohortsize=cohortsize, add.args=add.args)
-    
     ress <- list(
         orm=orm.res,
         paras=list(p.true=p.true, 
-                   mtd=tmtd, 
+                   mtd=99, 
                    add.args=add.args,
                    target=target,
                    ncohort=ncohort,
@@ -104,9 +97,7 @@ run.fn <- function(k){
 }
 
 
-nsimu <- 10000
+nsimu <- 1000
 seeds <- 1:nsimu
-file.name <- paste0("../results/SMMR-R2/", "MTDOverDose", nsimu, ".RData")
 results <- mclapply(1:nsimu, run.fn, mc.cores=80)
 post.process.random(results)
-save(results, file=file.name)
