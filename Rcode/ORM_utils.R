@@ -35,8 +35,8 @@ Odds.samples <- function(y1, n1, y2, n2, alp.prior, bet.prior){
 prob.int <- function(phi, y1, n1, y2, n2, alp.prior, bet.prior){
     alp1 <- alp.prior + y1
     alp2 <- alp.prior + y2
-    bet1 <- alp.prior + n1 - y1
-    bet2 <- alp.prior + n2 - y2
+    bet1 <- bet.prior + n1 - y1
+    bet2 <- bet.prior + n2 - y2
     fn.min <- function(x){
         dbeta(x, alp1, bet1)*(1-pbeta(x, alp2, bet2))
     }
