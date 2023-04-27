@@ -1,5 +1,5 @@
 # code for the real data section with plotting 
-setwd("C:/Users/JINHU/Documents/ProjectCode/CFO/Rcode")
+setwd("C:/Users/JINHU/Documents/ProjectCode/CFO-simu/Rcode")
 library(Iso)
 ns <- c(3, 5, 24, 25)
 ys <- c(0, 0, 4, 4)
