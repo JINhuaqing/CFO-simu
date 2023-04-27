@@ -16,8 +16,8 @@ post.prob.fn <- function(phi, y, n, alp.prior=0.1, bet.prior=0.1){
 Odds.samples <- function(y1, n1, y2, n2, alp.prior, bet.prior){
     alp1 <- alp.prior + y1
     alp2 <- alp.prior + y2
-    bet1 <- alp.prior + n1 - y1
-    bet2 <- alp.prior + n2 - y2
+    bet1 <- bet.prior + n1 - y1
+    bet2 <- bet.prior + n2 - y2
     sps1 <- c()
     sps2 <- c()
     while (length(sps1)<10000){
